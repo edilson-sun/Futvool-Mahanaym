@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Pitch | Registro de Equipos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error-container": "#ffa8a3",
+              "on-surface": "#ffffff",
+              "on-secondary-fixed-variant": "#006946",
+              "tertiary-dim": "#00cdee",
+              "surface-bright": "#2c2c2c",
+              "outline": "#767575",
+              "surface-tint": "#6bfe9c",
+              "secondary": "#72fbbd",
+              "primary-fixed": "#6bfe9c",
+              "on-tertiary-fixed-variant": "#005361",
+              "surface-container-lowest": "#000000",
+              "on-error": "#490006",
+              "on-tertiary": "#005361",
+              "surface-container-high": "#20201f",
+              "error-container": "#9f0519",
+              "background": "#0e0e0e",
+              "error-dim": "#d7383b",
+              "on-tertiary-container": "#004956",
+              "surface": "#0e0e0e",
+              "primary-fixed-dim": "#5bef90",
+              "primary": "#6bfe9c",
+              "on-primary-fixed": "#004a23",
+              "surface-dim": "#0e0e0e",
+              "secondary-container": "#006c49",
+              "on-primary-fixed-variant": "#006a35",
+              "on-primary": "#005f2f",
+              "on-tertiary-fixed": "#00333d",
+              "tertiary-container": "#00dcff",
+              "on-secondary-fixed": "#004930",
+              "on-primary-container": "#003417",
+              "on-surface-variant": "#adaaaa",
+              "on-secondary": "#005e3e",
+              "tertiary-fixed-dim": "#00cdee",
+              "surface-variant": "#262626",
+              "surface-container": "#1a1a1a",
+              "surface-container-low": "#131313",
+              "on-secondary-container": "#e1ffeb",
+              "on-background": "#ffffff",
+              "secondary-fixed": "#72fbbd",
+              "inverse-primary": "#006e37",
+              "secondary-dim": "#63ecaf",
+              "tertiary-fixed": "#00dcff",
+              "inverse-on-surface": "#565555",
+              "outline-variant": "#484847",
+              "error": "#ff716c",
+              "tertiary": "#7ee6ff",
+              "inverse-surface": "#fcf9f8",
+              "surface-container-highest": "#262626",
+              "primary-container": "#1fc46a",
+              "primary-dim": "#5bef90",
+              "secondary-fixed-dim": "#63ecaf"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .glass-card {
+        background: rgba(38, 38, 38, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary-container">
+<!-- SideNavBar Anchor -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-neutral-900 border-r border-outline-variant/10 py-6 z-50">
+<div class="px-6 mb-8">
+<h1 class="text-xl font-headline font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+                Pro League
+            </h1>
+<p class="text-xs text-on-surface-variant font-label mt-1">Season 2024</p>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-label rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-label rounded-lg" href="#">
+<span class="material-symbols-outlined">trophy</span>
+                Tournaments
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-label rounded-lg" href="#">
+<span class="material-symbols-outlined">sports_soccer</span>
+                Matches
+            </a>
+<!-- Active State: Teams -->
+<a class="flex items-center gap-3 px-3 py-2 text-primary bg-primary/5 border-r-4 border-primary transition-all duration-300 font-label font-bold rounded-l-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+                Teams
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-label rounded-lg" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+                Analytics
+            </a>
+</nav>
+<div class="px-4 py-4 mb-4">
+<button class="w-full py-2.5 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-headline font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+                Create Tournament
+            </button>
+</div>
+<footer class="px-4 pt-4 border-t border-outline-variant/10 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-label rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-label rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+</footer>
+</aside>
+<main class="md:ml-64 min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="w-full sticky top-0 z-40 bg-neutral-950/60 backdrop-blur-xl flex justify-between items-center px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-headline font-black text-primary italic tracking-tight">The Pitch</span>
+<div class="relative group hidden lg:block">
+<span class="absolute inset-y-0 left-3 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">search</span>
+</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm text-on-surface w-64 focus:ring-1 focus:ring-primary transition-all" placeholder="Buscar jugadores o equipos..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional sports manager in a dark suit with soft studio lighting and dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKCBzXrx68nZGTFKpCeq45YP4DfkxgamZEhJDVHbMtIEL7_R6uit4OWUUCkYZUbMB-ow1Vys0YzyX-FjooYUQAXJrGDUiinc6xMBaYZkZ7dvhtINo9AEUJ1jq6iCWjKXyfh0ZsldVm8wa-wxnjf7b_IKvDQuZkuunXRDXP8DYmE1UITezc5YE8oejTt8_gOQHcB7qESgQF3PsZwhmdX5JkPGS6_aoSByrc5uaCOo2mMNUS59EmLYRwRfRX3Esbhlab-gm-Yud3eAo"/>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-6xl mx-auto space-y-12">
+<!-- Header Section -->
+<section class="space-y-2">
+<h2 class="text-4xl font-headline font-extrabold tracking-tight text-on-surface">Gestión de Equipos</h2>
+<p class="text-on-surface-variant text-lg">Configura los detalles de la escuadra y su plantilla oficial.</p>
+</section>
+<!-- Grid: Form & Team Logo Preview -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Nuevo Equipo Form -->
+<div class="lg:col-span-8 glass-card rounded-xl border border-outline-variant/10 p-8">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">add_business</span>
+</div>
+<h3 class="text-2xl font-headline font-bold">Nuevo Equipo</h3>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Nombre del Equipo</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg p-4 text-on-surface focus:bg-surface-container-high focus:ring-0 shadow-[0_1px_0_0_#6bfe9c] transition-all" placeholder="Ej. Real Madrid CF" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Categoría</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg p-4 text-on-surface focus:bg-surface-container-high focus:ring-0 shadow-[0_1px_0_0_#6bfe9c] transition-all">
+<option>Primera División</option>
+<option>Segunda División</option>
+<option>Juvenil A</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Descripción del Equipo</label>
+<textarea class="w-full bg-surface-container-lowest border-none rounded-lg p-4 text-on-surface focus:bg-surface-container-high focus:ring-0 shadow-[0_1px_0_0_#6bfe9c] transition-all" placeholder="Historia breve o lema del equipo..." rows="3"></textarea>
+</div>
+<div class="flex justify-end gap-4 pt-4">
+<button class="px-6 py-3 text-primary font-headline font-bold border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors" type="button">Limpiar</button>
+<button class="px-10 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-headline font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform" type="submit">Guardar Equipo</button>
+</div>
+</form>
+</div>
+<!-- Logo Upload Area -->
+<div class="lg:col-span-4 h-full">
+<div class="glass-card rounded-xl border border-outline-variant/10 p-8 flex flex-col items-center justify-center text-center h-full min-h-[300px] group cursor-pointer border-dashed border-2 hover:border-primary/50 transition-all">
+<div class="mb-4 p-6 rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-5xl">cloud_upload</span>
+</div>
+<h4 class="font-headline font-bold text-lg mb-1">Escudo del Equipo</h4>
+<p class="text-sm text-on-surface-variant px-4">Arrastra aquí el logo o haz clic para buscar. Formatos PNG, SVG (Max 5MB)</p>
+</div>
+</div>
+</section>
+<!-- Jugadores Section -->
+<section class="space-y-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="space-y-1">
+<h3 class="text-3xl font-headline font-bold text-on-surface">Plantilla de Jugadores</h3>
+<p class="text-on-surface-variant">Gestiona los dorsales y posiciones de los inscritos.</p>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest text-primary font-headline font-bold rounded-xl border border-primary/20 hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">person_add</span>
+                        Agregar Jugador
+                    </button>
+</div>
+<!-- Elegant Table -->
+<div class="overflow-hidden glass-card rounded-xl border border-outline-variant/10">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-xs font-label uppercase tracking-widest text-on-surface-variant">Jugador</th>
+<th class="px-8 py-5 text-xs font-label uppercase tracking-widest text-on-surface-variant">Dorsal</th>
+<th class="px-8 py-5 text-xs font-label uppercase tracking-widest text-on-surface-variant">Posición</th>
+<th class="px-8 py-5 text-xs font-label uppercase tracking-widest text-on-surface-variant">Estado</th>
+<th class="px-8 py-5 text-xs font-label uppercase tracking-widest text-on-surface-variant text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-lowest border border-outline-variant/20">
+<img alt="Player" class="w-full h-full object-cover" data-alt="Close-up profile of a focused football player in action on a green pitch with bokeh light background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbjEvz7jTbjMlVDYoVdnp5a7cE2RdZNSKvNzvxObyNlzJKWUouegdVyorg-Y8HQRVJdR7d81mYZrp6xf-lr7W7E6U-O-7AhQy2WPcRqjGI_VR4LtAXDEaw_IHldxx8OjWnzljGjdUE3Qc9xr8hBpfT4e420vSUhFBKntVaYXCiGWW8Y_P4uEOA_X9oT491SpFK1O-arChan_z-2n4L4EWEz062LAaZnZE5JXvtP0NHsvwdp_whXXbdaG9WeqQnO8jRclJxbNlRGdM"/>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Alessandro Silva</p>
+<p class="text-xs text-on-surface-variant">Inscrito: 12/03/2024</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-2xl font-headline font-black text-primary/80">10</span>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary text-xs font-bold rounded-lg uppercase tracking-tighter">Delantero</span>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-sm font-label text-on-surface">Activo</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary p-2 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="text-on-surface-variant hover:text-error p-2 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-lowest border border-outline-variant/20">
+<img alt="Player" class="w-full h-full object-cover" data-alt="Athletic man in sports gear against a minimalist architectural background with dramatic shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBnShygW7svcbMp3J3BJyZ8BbMvw6NUobYVPV9PhzUCUlnbBTwMdHqfNkC-bx54NkaFHqZLnki8DsPGT-jJZKaXy-EVQz7pWgspuhC9n1RzeL7-HDPn5hnZdT2LPuy2ngXEm4SxPA_F3zwoKH_laOLSR9fELFQnI46IMa2oKbGYpjhrWziWkK2E5M0rIwPWsCueBJdB4_DcG5ilubDrD2H2ts9fO-XjO-TdDNU0ybcYM1sOwxUljue-NaeI7RVcB4zntQvTp2JLz8"/>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Marc Jensen</p>
+<p class="text-xs text-on-surface-variant">Inscrito: 15/03/2024</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-2xl font-headline font-black text-primary/80">01</span>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-lg uppercase tracking-tighter">Portero</span>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-sm font-label text-on-surface">Activo</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary p-2 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="text-on-surface-variant hover:text-error p-2 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-lowest border border-outline-variant/20">
+<img alt="Player" class="w-full h-full object-cover" data-alt="Side profile of a soccer player wearing a dark jersey on a professional stadium field during twilight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClsRykL7LYL61zYFYI-9c_2GPsuHje6far9Iv0O1l-yTkX2P7aLJDyd-ki0gcz8wJtKTjf3mBUB5sYhWtGT2YTTbwmo9nQN11g0BOyTgbx4gIGWDqyytTZRyFJZCTGE7_49Ur6d4aqZRnkZ47haeyLejA_aqwxgcz3l8M5QdXcbil6nKhCvoGb1JRlprCObgNYbmHgaw6XOKJSd7u-6ogQs35YH0IjNa4SHNf8tRN12eKcqphfWioyYNOwEn26FX2ec-TAZB_w1Xg"/>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">David Alaba</p>
+<p class="text-xs text-on-surface-variant">Inscrito: 18/03/2024</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="text-2xl font-headline font-black text-primary/80">04</span>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-on-surface-variant/10 text-on-surface-variant text-xs font-bold rounded-lg uppercase tracking-tighter">Defensa</span>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="text-sm font-label text-on-surface-variant">Pendiente</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary p-2 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="text-on-surface-variant hover:text-error p-2 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Empty State / Footer hint -->
+<div class="p-8 text-center bg-surface-container-low/30">
+<p class="text-on-surface-variant text-sm">Mostrando 3 de 22 jugadores máximos permitidos.</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-900 border-t border-outline-variant/10 flex justify-around items-center py-3 z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">trophy</span>
+<span class="text-[10px] font-label">Tourney</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="text-[10px] font-label font-bold">Teams</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-label">Config</span>
+</button>
+</nav>
+</body></html>

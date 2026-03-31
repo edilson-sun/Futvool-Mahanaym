@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Emerald Championship | Standings &amp; Scorers</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-low": "#131313",
+                        "on-secondary": "#005e3e",
+                        "tertiary-dim": "#00cdee",
+                        "surface-container": "#1a1a1a",
+                        "on-tertiary-fixed": "#00333d",
+                        "on-tertiary-container": "#004956",
+                        "on-tertiary": "#005361",
+                        "on-surface-variant": "#adaaaa",
+                        "secondary": "#72fbbd",
+                        "surface-variant": "#262626",
+                        "surface-bright": "#2c2c2c",
+                        "on-surface": "#ffffff",
+                        "error-dim": "#d7383b",
+                        "on-secondary-fixed-variant": "#006946",
+                        "surface-dim": "#0e0e0e",
+                        "inverse-primary": "#006e37",
+                        "error-container": "#9f0519",
+                        "on-primary-fixed": "#004a23",
+                        "surface-tint": "#6bfe9c",
+                        "primary": "#6bfe9c",
+                        "background": "#0e0e0e",
+                        "outline": "#767575",
+                        "secondary-container": "#006c49",
+                        "tertiary-fixed": "#00dcff",
+                        "primary-fixed": "#6bfe9c",
+                        "outline-variant": "#484847",
+                        "secondary-fixed": "#72fbbd",
+                        "surface-container-highest": "#262626",
+                        "on-error": "#490006",
+                        "tertiary-container": "#00dcff",
+                        "secondary-fixed-dim": "#63ecaf",
+                        "on-secondary-fixed": "#004930",
+                        "on-secondary-container": "#e1ffeb",
+                        "error": "#ff716c",
+                        "on-primary": "#005f2f",
+                        "primary-container": "#1fc46a",
+                        "on-primary-container": "#003417",
+                        "primary-dim": "#5bef90",
+                        "primary-fixed-dim": "#5bef90",
+                        "surface-container-lowest": "#000000",
+                        "on-primary-fixed-variant": "#006a35",
+                        "inverse-on-surface": "#565555",
+                        "inverse-surface": "#fcf9f8",
+                        "tertiary": "#7ee6ff",
+                        "on-tertiary-fixed-variant": "#005361",
+                        "secondary-dim": "#63ecaf",
+                        "on-error-container": "#ffa8a3",
+                        "surface-container-high": "#20201f",
+                        "tertiary-fixed-dim": "#00cdee",
+                        "on-background": "#ffffff",
+                        "surface": "#0e0e0e"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(38, 38, 38, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at top right, rgba(107, 254, 156, 0.15), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(31, 196, 106, 0.05), transparent 30%);
+        }
+        .crown-glow {
+            filter: drop-shadow(0 0 8px rgba(107, 254, 156, 0.6));
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen hero-gradient">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex justify-between items-center px-8 h-20 w-full">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-bold tracking-tighter text-emerald-400 font-headline">Emerald Championship</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-neutral-400 hover:text-emerald-300 transition-colors font-manrope tracking-tight" href="#">Tournament</a>
+<a class="text-neutral-400 hover:text-emerald-300 transition-colors font-manrope tracking-tight" href="#">Teams</a>
+<a class="text-neutral-400 hover:text-emerald-300 transition-colors font-manrope tracking-tight" href="#">News</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group hidden lg:block">
+<input class="bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary rounded-full px-4 py-2 text-sm w-64 placeholder-outline transition-all" placeholder="Search matches..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-outline-variant">search</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">account_circle</span>
+</div>
+</div>
+</nav>
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 pt-24 bg-[#131313] flex flex-col gap-y-4 p-6 hidden md:flex">
+<div class="mb-8">
+<h2 class="text-emerald-400 font-black font-headline tracking-widest text-xs uppercase">Tournament Hub</h2>
+<p class="text-on-surface-variant text-[10px] uppercase tracking-tighter">Season 2024</p>
+</div>
+<nav class="flex flex-col gap-2">
+<!-- Active State: Standings -->
+<a class="flex items-center gap-3 p-3 bg-emerald-500/10 text-emerald-400 border-r-4 border-emerald-500 transition-all font-manrope uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+                Standings
+            </a>
+<a class="flex items-center gap-3 p-3 text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-all font-manrope uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">sports_soccer</span>
+                Top Scorers
+            </a>
+<a class="flex items-center gap-3 p-3 text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-all font-manrope uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">event_available</span>
+                Results
+            </a>
+<a class="flex items-center gap-3 p-3 text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-all font-manrope uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+                Schedule
+            </a>
+</nav>
+<div class="mt-auto pb-8">
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+<span class="material-symbols-outlined text-sm">sensors</span>
+                Live Match Center
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-0 md:ml-64 pt-24 px-8 pb-12">
+<header class="mb-10">
+<h1 class="text-5xl font-extrabold font-headline tracking-tighter mb-2">Tournament <span class="text-primary">Dashboard</span></h1>
+<p class="text-on-surface-variant max-w-2xl">Visualizing the peak performance of the Season 2024 Emerald Championship. Standings are updated in real-time after every final whistle.</p>
+</header>
+<!-- Grid Layout: Bento-inspired -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Standings Block (Col 1-8) -->
+<section class="col-span-12 lg:col-span-8">
+<div class="bg-surface-container-low rounded-xl p-8 shadow-2xl relative overflow-hidden">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-2xl font-bold font-headline">Tabla de Posiciones</h3>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Group Stage - Group A</p>
+</div>
+<span class="text-primary text-xs font-bold bg-primary/10 px-3 py-1 rounded-full uppercase">Updated 2m ago</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-separate border-spacing-y-2">
+<thead>
+<tr class="text-on-surface-variant text-[10px] uppercase tracking-widest text-left">
+<th class="pb-4 px-4">Pos</th>
+<th class="pb-4">Club</th>
+<th class="pb-4 text-center">MP</th>
+<th class="pb-4 text-center">W</th>
+<th class="pb-4 text-center">D</th>
+<th class="pb-4 text-center">L</th>
+<th class="pb-4 text-center">GF</th>
+<th class="pb-4 text-center">GA</th>
+<th class="pb-4 text-center">GD</th>
+<th class="pb-4 text-right pr-4">Pts</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<!-- 1st Place Highlight -->
+<tr class="bg-primary/10 group hover:bg-primary/20 transition-colors">
+<td class="py-4 px-4 rounded-l-xl font-bold text-primary flex items-center gap-2">
+                                        1 <span class="material-symbols-outlined text-sm crown-glow" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</td>
+<td class="py-4 font-semibold">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg">shield</span>
+</div>
+                                            Emerald Titans
+                                        </div>
+</td>
+<td class="py-4 text-center font-medium">12</td>
+<td class="py-4 text-center">9</td>
+<td class="py-4 text-center">2</td>
+<td class="py-4 text-center text-on-surface-variant">1</td>
+<td class="py-4 text-center">34</td>
+<td class="py-4 text-center">12</td>
+<td class="py-4 text-center text-primary">+22</td>
+<td class="py-4 text-right pr-4 rounded-r-xl font-black text-primary text-lg">29</td>
+</tr>
+<tr class="bg-surface-container-highest hover:bg-surface-bright transition-colors">
+<td class="py-4 px-4 rounded-l-xl font-medium text-on-surface-variant">2</td>
+<td class="py-4 font-semibold">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-lg">shield</span>
+</div>
+                                            Iron Lions FC
+                                        </div>
+</td>
+<td class="py-4 text-center font-medium">12</td>
+<td class="py-4 text-center">8</td>
+<td class="py-4 text-center">1</td>
+<td class="py-4 text-center text-on-surface-variant">3</td>
+<td class="py-4 text-center">28</td>
+<td class="py-4 text-center">15</td>
+<td class="py-4 text-center text-tertiary">+13</td>
+<td class="py-4 text-right pr-4 rounded-r-xl font-bold">25</td>
+</tr>
+<tr class="bg-transparent hover:bg-surface-container transition-colors">
+<td class="py-4 px-4 rounded-l-xl font-medium text-on-surface-variant">3</td>
+<td class="py-4 font-semibold">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-lg">shield</span>
+</div>
+                                            Shadow Wolves
+                                        </div>
+</td>
+<td class="py-4 text-center font-medium">12</td>
+<td class="py-4 text-center">6</td>
+<td class="py-4 text-center">3</td>
+<td class="py-4 text-center text-on-surface-variant">3</td>
+<td class="py-4 text-center">21</td>
+<td class="py-4 text-center">18</td>
+<td class="py-4 text-center">+3</td>
+<td class="py-4 text-right pr-4 rounded-r-xl font-bold">21</td>
+</tr>
+<tr class="bg-surface-container-highest hover:bg-surface-bright transition-colors">
+<td class="py-4 px-4 rounded-l-xl font-medium text-on-surface-variant">4</td>
+<td class="py-4 font-semibold">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-lg">shield</span>
+</div>
+                                            Coastal Kings
+                                        </div>
+</td>
+<td class="py-4 text-center font-medium">12</td>
+<td class="py-4 text-center">5</td>
+<td class="py-4 text-center">2</td>
+<td class="py-4 text-center text-on-surface-variant">5</td>
+<td class="py-4 text-center">19</td>
+<td class="py-4 text-center">22</td>
+<td class="py-4 text-center text-error">-3</td>
+<td class="py-4 text-right pr-4 rounded-r-xl font-bold">17</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Top Scorers Block (Col 9-12) -->
+<section class="col-span-12 lg:col-span-4">
+<div class="bg-surface-container-low rounded-xl p-8 shadow-2xl flex flex-col h-full">
+<div class="mb-8">
+<h3 class="text-2xl font-bold font-headline">Top Goleadores</h3>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Golden Boot Race</p>
+</div>
+<div class="flex flex-col gap-6">
+<!-- Scorer 1 -->
+<div class="flex items-center gap-4 group cursor-pointer">
+<div class="relative">
+<img class="w-16 h-16 rounded-xl object-cover ring-2 ring-primary" data-alt="Close-up professional portrait of a confident male football player with short hair against a dark studio background with dramatic rim lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF4ee0dUvd3Ed3347puwlVuft7yejA_jN1--MNOsbMAosTHp_BfXXd6djXvZH_2P6Hi4eBVjVunpVxe4hFS6kQWJHohYmK2ETK-gPJr9tyDfJEiNIozhlAdEEeLwgYPCq9DFAOSM2McLLeygMrC7tI5L1oMLvJjtyXI-UwE9XXZTxeHc3w3TL2wNS4lrix5sZ_GXMSqWJ5JEMvCXOaTtB2AnPQRpb5Vik_iF6pIv5ZjzdmA3ZZAj5ERjpOXAC7aQNd9D5R5LqEzXI"/>
+<div class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">1</div>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-lg group-hover:text-primary transition-colors">Marco Silva</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">shield</span>
+                                    Emerald Titans
+                                </div>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-black text-primary">14</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Goals</span>
+</div>
+</div>
+<!-- Scorer 2 -->
+<div class="flex items-center gap-4 group cursor-pointer opacity-90 hover:opacity-100 transition-opacity">
+<div class="relative">
+<img class="w-16 h-16 rounded-xl object-cover ring-1 ring-outline-variant" data-alt="Portrait of a young athletic footballer in a team jersey looking intensely into the camera, outdoor training ground background at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0KiJfpM-Q7y1L9MuSBjtzMZGlMcyY0Lzy_vpccTKQxxVyEoa2AFDCb8dRPYq2mH87qhGOCUpjNumf7EOBfQ7wx_E8QJQz_OZDs1XNaUglR1r3v6FFt8u4bw0CLPs9jOpbZMlbuSrS6d_7nReqeRqICqUcI7S9ifHZq4wPlS-zE8o7z77WM23UxAoUwkUIQOqUWXOU4yCI5iTO3MNom2zHZEaA93um57BuKl4YrlC5o3wY3rSRXKzA-CNXKlhTKXZAfL6ko7Dj3Mw"/>
+<div class="absolute -top-2 -right-2 bg-surface-container-highest text-on-surface text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">2</div>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-lg group-hover:text-primary transition-colors">Julian Varg</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-tertiary">shield</span>
+                                    Iron Lions FC
+                                </div>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-black">11</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Goals</span>
+</div>
+</div>
+<!-- Scorer 3 -->
+<div class="flex items-center gap-4 group cursor-pointer opacity-80 hover:opacity-100 transition-opacity">
+<div class="relative">
+<img class="w-16 h-16 rounded-xl object-cover ring-1 ring-outline-variant" data-alt="Close-up of a smiling professional soccer player with beard, moody cinematic lighting with neon green highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRRg0hklS7bLSWSM1X6cDYUIF3BU2fFIu91mdEztvYtsBdT3nd3_U758DS55t_KjVoTTj7nBsWawbkATqptFqnuXeTsJOG98lLpSiVsp96hjnVvesRutN0LLTzaQHK9l4A6t1VPUuN6CIfK0HKFs3JZ7nT1VY3BxVxSSuDbyqSeNgZj8oqv3VgY8jeAm7e3zBypUnwyR0WMU-yV4y7GKnbR2U3zwZWZibwRQT--KjBs8AiKhGylaYdjI7eMSE2-aoopWqsI2LCook"/>
+<div class="absolute -top-2 -right-2 bg-surface-container-highest text-on-surface text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">3</div>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-lg group-hover:text-primary transition-colors">Andre Costa</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">shield</span>
+                                    Shadow Wolves
+                                </div>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-black">9</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Goals</span>
+</div>
+</div>
+<!-- Scorer 4 -->
+<div class="flex items-center gap-4 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<div class="relative">
+<img class="w-16 h-16 rounded-xl object-cover ring-1 ring-outline-variant" data-alt="Athletic man in sports gear standing in a stadium hallway with light streaks and motion blur effect" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn768AbABOxwrp7lUuy_bTY0Otd0FOpNEEfVw4p-uHdrWTxtvLHC4lB7aGcA5fbhCvOfPLTaRAA0UrFCArzNR62RNdBgdEbtIJcjSCCjLkUhbSyBnlq64A9M8ClAVPFYdrlNxACRaEcoN_G631WbGP5Hu6xtp5mWSaFagbqz5H72QYSvsVbSMuvFinYsHyFwUNhwy7wxwp-81FTgjVQfi2JcUQhztLR7YhLU0yTHCD_67TkSQ4csqNQ6B7wA1RzstQVOGyxHr1Vpw"/>
+<div class="absolute -top-2 -right-2 bg-surface-container-highest text-on-surface text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">4</div>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-lg group-hover:text-primary transition-colors">Leon Kern</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-tertiary">shield</span>
+                                    Iron Lions FC
+                                </div>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-black">8</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Goals</span>
+</div>
+</div>
+</div>
+<button class="mt-auto w-full py-4 border border-outline-variant/30 rounded-lg text-on-surface-variant text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-all">
+                        View All Scorers
+                    </button>
+</div>
+</section>
+<!-- Bottom Row: Recent Form / Match Highlight -->
+<section class="col-span-12">
+<div class="bg-surface-container-highest/40 backdrop-blur-md rounded-xl p-8 flex flex-col md:flex-row items-center gap-10">
+<div class="flex-1">
+<span class="inline-block mb-4 px-3 py-1 bg-primary text-on-primary-container text-[10px] font-bold uppercase rounded flex items-center gap-2 w-fit">
+<span class="w-1.5 h-1.5 bg-on-primary-container rounded-full animate-pulse"></span>
+                            Match of the Day
+                        </span>
+<h2 class="text-4xl font-black font-headline tracking-tighter mb-4 italic">CLASH OF THE TITANS</h2>
+<p class="text-on-surface-variant max-w-lg mb-6">The upcoming match between the top two seeds will decide who enters the playoff phase as the number one contender.</p>
+<div class="flex gap-4">
+<button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-primary transition-colors">
+                                Buy Tickets
+                                <span class="material-symbols-outlined">confirmation_number</span>
+</button>
+<button class="border border-outline-variant/50 text-on-surface px-6 py-3 rounded-full font-bold hover:bg-surface-container-highest transition-colors">
+                                Match Preview
+                            </button>
+</div>
+</div>
+<div class="flex-1 w-full max-w-md">
+<div class="bg-surface-container-low rounded-2xl p-6 shadow-2xl relative">
+<div class="flex justify-between items-center mb-6">
+<div class="text-center">
+<div class="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center mb-2 mx-auto">
+<span class="material-symbols-outlined text-primary text-3xl">shield</span>
+</div>
+<p class="text-[10px] font-bold uppercase">Titans</p>
+</div>
+<div class="text-center">
+<p class="text-xs text-on-surface-variant uppercase font-bold mb-1">vs</p>
+<p class="text-xl font-black font-headline">Sat 20:00</p>
+</div>
+<div class="text-center">
+<div class="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center mb-2 mx-auto">
+<span class="material-symbols-outlined text-tertiary text-3xl">shield</span>
+</div>
+<p class="text-[10px] font-bold uppercase">Lions</p>
+</div>
+</div>
+<div class="text-center pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Venue: Emerald Arena Stadium</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Area (Subtle) -->
+<footer class="ml-0 md:ml-64 px-8 py-10 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-on-surface-variant tracking-wider uppercase">© 2024 Emerald Championship Series. All Rights Reserved.</p>
+<div class="flex gap-6 text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">social_leaderboard</span></a>
+<a class="hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">camera</span></a>
+<a class="hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">video_library</span></a>
+</div>
+</footer>
+</body></html>

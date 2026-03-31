@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Pitch | Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "inverse-surface": "#fcf9f8",
+                "tertiary-fixed-dim": "#00cdee",
+                "surface-container-highest": "#262626",
+                "secondary-fixed": "#72fbbd",
+                "on-background": "#ffffff",
+                "error": "#ff716c",
+                "surface": "#0e0e0e",
+                "on-primary-fixed": "#004a23",
+                "surface-dim": "#0e0e0e",
+                "primary-fixed-dim": "#5bef90",
+                "inverse-on-surface": "#565555",
+                "on-tertiary-container": "#004956",
+                "on-surface": "#ffffff",
+                "on-secondary-fixed": "#004930",
+                "on-surface-variant": "#adaaaa",
+                "on-primary-fixed-variant": "#006a35",
+                "on-secondary-fixed-variant": "#006946",
+                "error-container": "#9f0519",
+                "surface-tint": "#6bfe9c",
+                "primary-container": "#1fc46a",
+                "tertiary": "#7ee6ff",
+                "on-primary": "#005f2f",
+                "surface-container-low": "#131313",
+                "on-primary-container": "#003417",
+                "on-tertiary": "#005361",
+                "surface-bright": "#2c2c2c",
+                "surface-container-lowest": "#000000",
+                "surface-container-high": "#20201f",
+                "on-tertiary-fixed-variant": "#005361",
+                "tertiary-dim": "#00cdee",
+                "secondary": "#72fbbd",
+                "on-error-container": "#ffa8a3",
+                "outline": "#767575",
+                "tertiary-container": "#00dcff",
+                "on-tertiary-fixed": "#00333d",
+                "surface-variant": "#262626",
+                "error-dim": "#d7383b",
+                "outline-variant": "#484847",
+                "secondary-dim": "#63ecaf",
+                "primary-fixed": "#6bfe9c",
+                "surface-container": "#1a1a1a",
+                "inverse-primary": "#006e37",
+                "primary": "#6bfe9c",
+                "on-secondary-container": "#e1ffeb",
+                "on-error": "#490006",
+                "on-secondary": "#005e3e",
+                "background": "#0e0e0e",
+                "secondary-container": "#006c49",
+                "tertiary-fixed": "#00dcff",
+                "primary-dim": "#5bef90",
+                "secondary-fixed-dim": "#63ecaf"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(38, 38, 38, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(72, 72, 71, 0.15);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary-container">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-neutral-900 flex flex-col py-6 z-50 border-r border-outline-variant/10">
+<div class="px-8 mb-10">
+<h1 class="text-xl font-bold text-emerald-400 font-headline tracking-tight italic">The Pitch</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1">Admin Control</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-400 bg-emerald-500/5 border-r-4 border-emerald-500 font-manrope text-sm font-medium transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-500 font-manrope text-sm font-medium hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="trophy">trophy</span>
+                Tournaments
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-500 font-manrope text-sm font-medium hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+                Matches
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-500 font-manrope text-sm font-medium hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+                Teams
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-500 font-manrope text-sm font-medium hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+                Analytics
+            </a>
+</nav>
+<div class="px-4 mt-auto space-y-2">
+<div class="p-4 rounded-xl bg-surface-container-low mb-6">
+<div class="flex items-center gap-3 mb-3">
+<img alt="Pro League" class="w-10 h-10 rounded-lg object-cover" data-alt="Modern geometric soccer tournament logo with emerald green and black aesthetics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsFRdYDNl5Q2ox55y8koDo7anhtDu5RkpoRi79I6zjSiTxKXsHUHgAY1_o1nNp3vkdAEbkL_ibrwtygf-akyO8U7LHfunGKOiILXFhXiFVUxCTlrBENc0kbLDS5kuDXTyn-KRNKMhpZtHyNYA3zGVb7mox_Rt9yeDTAJCaHlkihAdpT8vjzVXLHH9XYsgp4Ui4IyE7pYrHmG7an6YjRuns10KNKOgIAs5LbACWlaUUB3b3zz4PQw5O5MMKKOhuiBofFbAjXWsbotU"/>
+<div>
+<p class="text-xs font-bold text-on-surface">Pro League</p>
+<p class="text-[10px] text-on-surface-variant">Season 2024</p>
+</div>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary-container text-xs font-bold rounded-lg hover:brightness-110 transition-all">
+                    Create Tournament
+                </button>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-500 hover:text-emerald-300 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-500 hover:text-emerald-300 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Support
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="w-full sticky top-0 z-40 bg-neutral-950/60 backdrop-blur-xl flex justify-between items-center px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary focus:bg-surface-container-high transition-all" placeholder="Search matches, teams, or players..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-on-surface-variant hover:bg-emerald-500/10 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-neutral-950"></span>
+</button>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Super Admin</p>
+</div>
+<img alt="User avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/20" data-alt="Professional portrait of a male sports administrator in a clean modern setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzoytEw6tAPPxXUO0Db2M5nNe6ZBKThCQ_uHZkIt4V2XDTFXi012TFFsFtdYqYDEZyjpDV9HcgudRbc29Wp5Gb6XPc0BD4YReyqIWe4A0axLRT7G4FcDA70nBeJ_zONFKXvyg4N89ixdH3rDK6plJxM-DXeY5xJveuJ2GVnlyUtnJgA4FN3-OwlMslAZLPr9VhvUDAkx67ccCiQsLuBuitZj9Ge_PLiriQf_gX56nWmpfHJ9hNZ8LzA42bY1c8wOuwhGnF0P7vVqM"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-8 space-y-8">
+<!-- Welcome Header -->
+<section>
+<h2 class="text-3xl font-black font-headline tracking-tight text-on-surface mb-1">Match Day Overview</h2>
+<p class="text-on-surface-variant">Real-time performance metrics for <span class="text-primary font-bold">Pro League 2024</span></p>
+</section>
+<!-- Metric Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Total Teams -->
+<div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="groups">groups</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-2">Total Teams</p>
+<div class="flex items-end gap-2">
+<span class="text-4xl font-black font-headline text-on-surface">24</span>
+<span class="text-primary text-xs font-bold mb-1.5 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +2
+                        </span>
+</div>
+</div>
+<!-- Registered Players -->
+<div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="person">person</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-2">Registered Players</p>
+<div class="flex items-end gap-2">
+<span class="text-4xl font-black font-headline text-on-surface">528</span>
+<span class="text-primary text-xs font-bold mb-1.5">Active</span>
+</div>
+</div>
+<!-- Total Goals -->
+<div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-2">Total Goals</p>
+<div class="flex items-end gap-2">
+<span class="text-4xl font-black font-headline text-on-surface">1,240</span>
+<span class="text-on-surface-variant text-xs mb-1.5">7.9 / match</span>
+</div>
+</div>
+<!-- Matches Played -->
+<div class="glass-card p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-8xl" data-icon="event_available">event_available</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-2">Matches Played</p>
+<div class="flex items-end gap-2">
+<span class="text-4xl font-black font-headline text-on-surface">156<span class="text-on-surface-variant/30 text-2xl">/210</span></span>
+</div>
+<div class="w-full bg-surface-container-low h-1 rounded-full mt-4">
+<div class="bg-primary h-full rounded-full" style="width: 74%"></div>
+</div>
+</div>
+</section>
+<!-- Upcoming Matches Table -->
+<section class="space-y-4">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-xl font-bold font-headline">Upcoming Matches</h3>
+<p class="text-sm text-on-surface-variant">Scheduled fixtures for the next 48 hours</p>
+</div>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+                        View All Schedule
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
+<th class="px-8 py-4">Date/Time</th>
+<th class="px-8 py-4">Match</th>
+<th class="px-8 py-4">Category</th>
+<th class="px-8 py-4">Pitch/Location</th>
+<th class="px-8 py-4">Status</th>
+<th class="px-8 py-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Match Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="font-bold text-on-surface">Oct 24, 2024</div>
+<div class="text-xs text-on-surface-variant">18:30 PM</div>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold">Titans FC</span>
+<img alt="Team A" class="w-6 h-6 object-contain" data-alt="Stylized blue eagle sports logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqxL95jCi5zlU81Jta9UZMbT9ItqDtTdoPUkWt3qufW0Jgwonghlq2PO0D5yibnNNV0zhXrqG7186A6_NIjd6Zw3n_Vc8O92kElx6rB1XQ2uT8LQH9XvhXys6U1bCIMBkyR9VYXX7taFoZYj5YrmEmBkHBCFiYJciS1EXsSwOPvV3Y9c2uFq_KOn0QWJsitf6GJbGFxJp06ymrgx65oAWZkbT91BVmZRPOSfi7mKDDObPDkOKuE15CNtY2-LR2hxHksnL2FG6dRHs"/>
+</div>
+<span class="text-primary-container font-black italic">VS</span>
+<div class="flex items-center gap-2">
+<img alt="Team B" class="w-6 h-6 object-contain" data-alt="Stylized red dragon sports logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4nqet5YKza34lSbtj7JBlZom4yMs8co1fvhvZm0zFxa1SLnHLJ8ULMAG8xj4aKfoG_VDEF4HvL-dHPeOiwEnTz7BQ_7IDwmxrO_VyScIuwXgAN3-mkiegTMed5GhVcuhmSq2WgwWmqWLgt2IAkVU8mnrYJtWQqIef7YHyvDevXhRFGDlVLc5yH5uGWms9jp4RX0qAahY2cT-TrF_7cg2z-IU7gUM_zu-5jyPSUYEGQfP_Yx1jY8Z4w_ZT_1VbX1dAN9Zi46fRX90"/>
+<span class="text-sm font-bold">Vulcan Utd</span>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-[10px] font-bold text-tertiary">Group Stage B</span>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">
+                                    Pitch 04 • East Wing
+                                </td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary rounded-full active-pulse"></span>
+<span class="text-xs font-bold text-primary">Live</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Match Row 2 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="font-bold text-on-surface">Oct 24, 2024</div>
+<div class="text-xs text-on-surface-variant">20:15 PM</div>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold">Storm Bringers</span>
+<img alt="Team A" class="w-6 h-6 object-contain" data-alt="Modern geometric bolt logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0YWCBAjtM-qPQduYtzUbBkkBg5VGEzxl25RMn_VhUmzuuB7yhPWoGBgp9d_MkK5IUSS8Z8V-0sYzT2d7inWA7tRyYSHwhR2x3O9emAYDFEN5uFoSCt8rlJXDQV9PKtq1BX_-hLajbqkCUoAe7QlB0h0SiULQMIo9fqFvpbV3cf0qKWkh_MofFsH-eNMwxOSuurRsbMCJHnkdEhkOpQcp3Ifxt2cZY-21YUj5UTLwLz5-8hkKeXAMN9VOSsQAYmgouxHOqBpcYim4"/>
+</div>
+<span class="text-primary-container font-black italic">VS</span>
+<div class="flex items-center gap-2">
+<img alt="Team B" class="w-6 h-6 object-contain" data-alt="Shield with lion sports crest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAM52bhHv9B-cQxEGM_9ihtuwbdNV3eEonQffx4K5-aK8GmBZUvWc9EH2QFZb2JF_4EsQozOG0Wxx8Z-lXrNCY0BhDAGoaI5m5IQahhi43zexQnvLZLblAwKZ4xRBeLjYvEKA2a7AT40CWssJGwzxkoe6kf-2af3kTtDhzhbEWZa8TEN8EZeQsakgIl0mnUVLKoMebisctATuxBwJn3VGZKReKemzL4wj2uRB-OYuMgIW2DLR1zFB4xyTWPY7ynBGvcZ30u9C0snaw"/>
+<span class="text-sm font-bold">Lionsgate</span>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-[10px] font-bold text-on-surface-variant">Semi Finals</span>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">
+                                    Main Stadium
+                                </td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-on-surface-variant/30 rounded-full"></span>
+<span class="text-xs font-bold text-on-surface-variant">Upcoming</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Match Row 3 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-8 py-5">
+<div class="font-bold text-on-surface">Oct 25, 2024</div>
+<div class="text-xs text-on-surface-variant">15:00 PM</div>
+</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold">Apex Rovers</span>
+<img alt="Team A" class="w-6 h-6 object-contain" data-alt="Mountain peak sports logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-IgWKb8KINAu0AsLIhEwhDFXSKYMIyXCJ59CUGamFFiV7bpqwsnDZi9G3ITEdbwUuvJNj1W2nRWx3zft7srwy2PFoSOuE4i0ghs4Mia0Lkiz6b6HABe0t-yCaFbbA62TvV5HqflgKC4a1LYTZteyNJEOVwxSrrk6knN36a_Wt7FZAsVv6ms4cu04_95tl8Pxf5O91WrEA0PyTlBvt_mA6PIH2mRcLxdqE4KWXXdGMwBUnVYZQxfS0A07TWt6AH9UVj1nqDfMviN4"/>
+</div>
+<span class="text-primary-container font-black italic">VS</span>
+<div class="flex items-center gap-2">
+<img alt="Team B" class="w-6 h-6 object-contain" data-alt="Ocean wave soccer logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX2yiycMBLO35ROHt0xmPWV9NsKIo5BuewOtrxvZSQKvWI4VYRH5HauxqcO6tJpzqqP7b6kQVJO8-rNwJX2IBk4YbWQbQgjukb7h7BgedpAep5ekmER1QYF_T1upP7BNxWjyTk3rAWAGC67U6zjGXGC9DxYDKIedbYZ381WM7MNzdk64gdIa__GhEUOid8O0OjLgakKIsQ6ftNSqWTRRtXcXvsgKTXh9MEXHhqexYJlOKKLeRYRDSCcTfeEk1lG87sHZ7miJGeiek"/>
+<span class="text-sm font-bold">Velocity FC</span>
+</div>
+</div>
+</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-[10px] font-bold text-tertiary">Group Stage A</span>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">
+                                    Pitch 01 • South Field
+                                </td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-on-surface-variant/30 rounded-full"></span>
+<span class="text-xs font-bold text-on-surface-variant">Confirmed</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Bottom Quick Actions -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="glass-card p-6 rounded-xl border-l-4 border-primary">
+<div class="flex items-start justify-between mb-4">
+<div>
+<p class="font-bold">Pitch Maintenance</p>
+<p class="text-xs text-on-surface-variant">Pitch 03 is undergoing turf treatment.</p>
+</div>
+<span class="material-symbols-outlined text-primary">warning</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant">Estimated: 4h 20m remaining</span>
+<a class="text-primary font-bold" href="#">Full Status</a>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl border-l-4 border-tertiary">
+<div class="flex items-start justify-between mb-4">
+<div>
+<p class="font-bold">Top Scorer Update</p>
+<p class="text-xs text-on-surface-variant">M. Salah (Vulcan Utd) takes the lead.</p>
+</div>
+<span class="material-symbols-outlined text-tertiary">military_tech</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant">Total: 12 Goals</span>
+<a class="text-tertiary font-bold" href="#">Leaderboard</a>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl border-l-4 border-secondary">
+<div class="flex items-start justify-between mb-4">
+<div>
+<p class="font-bold">Referee Assignment</p>
+<p class="text-xs text-on-surface-variant">All matches for tonight are staffed.</p>
+</div>
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant">14 Referees Active</span>
+<a class="text-secondary font-bold" href="#">Roster</a>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

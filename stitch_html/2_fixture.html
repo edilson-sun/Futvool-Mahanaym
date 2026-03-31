@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-variant": "#262626",
+                        "on-error": "#490006",
+                        "secondary": "#72fbbd",
+                        "primary-container": "#1fc46a",
+                        "on-tertiary-fixed": "#00333d",
+                        "surface-container-highest": "#262626",
+                        "tertiary": "#7ee6ff",
+                        "inverse-primary": "#006e37",
+                        "secondary-fixed": "#72fbbd",
+                        "on-tertiary-fixed-variant": "#005361",
+                        "secondary-dim": "#63ecaf",
+                        "surface-container": "#1a1a1a",
+                        "tertiary-fixed": "#00dcff",
+                        "surface-container-lowest": "#000000",
+                        "on-tertiary": "#005361",
+                        "outline": "#767575",
+                        "on-surface-variant": "#adaaaa",
+                        "inverse-on-surface": "#565555",
+                        "primary-fixed-dim": "#5bef90",
+                        "on-surface": "#ffffff",
+                        "surface-tint": "#6bfe9c",
+                        "error": "#ff716c",
+                        "background": "#0e0e0e",
+                        "on-primary-fixed": "#004a23",
+                        "on-secondary-fixed": "#004930",
+                        "on-tertiary-container": "#004956",
+                        "surface": "#0e0e0e",
+                        "on-primary-container": "#003417",
+                        "surface-bright": "#2c2c2c",
+                        "inverse-surface": "#fcf9f8",
+                        "secondary-container": "#006c49",
+                        "primary-fixed": "#6bfe9c",
+                        "on-primary-fixed-variant": "#006a35",
+                        "on-secondary-fixed-variant": "#006946",
+                        "error-dim": "#d7383b",
+                        "tertiary-fixed-dim": "#00cdee",
+                        "primary-dim": "#5bef90",
+                        "outline-variant": "#484847",
+                        "on-primary": "#005f2f",
+                        "on-error-container": "#ffa8a3",
+                        "secondary-fixed-dim": "#63ecaf",
+                        "tertiary-container": "#00dcff",
+                        "error-container": "#9f0519",
+                        "on-secondary-container": "#e1ffeb",
+                        "surface-container-low": "#131313",
+                        "surface-container-high": "#20201f",
+                        "surface-dim": "#0e0e0e",
+                        "on-background": "#ffffff",
+                        "primary": "#6bfe9c",
+                        "tertiary-dim": "#00cdee",
+                        "on-secondary": "#005e3e"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(38, 38, 38, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 0.5rem;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-neutral-900 flex flex-col py-6 z-50">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">trophy</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-emerald-400 font-headline leading-tight">Pro League</h1>
+<p class="text-[10px] uppercase tracking-widest text-neutral-500 font-medium">Season 2024</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined">trophy</span> Tournaments
+            </a>
+<!-- Active Tab: Matches -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-400 bg-emerald-500/5 border-r-4 border-emerald-500 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sports_soccer</span> Matches
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined">groups</span> Teams
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined">leaderboard</span> Analytics
+            </a>
+</nav>
+<div class="mt-auto px-4 space-y-1">
+<button class="w-full mb-6 py-3 px-4 rounded-lg bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                Create Tournament
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800 transition-all duration-300 font-manrope text-sm font-medium" href="#">
+<span class="material-symbols-outlined">help</span> Support
+            </a>
+</div>
+</aside>
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-40 bg-neutral-950/60 backdrop-blur-xl flex justify-between items-center px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex items-center gap-4 bg-neutral-900/40 rounded-full px-4 py-2 border border-outline-variant/10 w-96">
+<span class="material-symbols-outlined text-neutral-400">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-full" placeholder="Search fixtures, teams, or players..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-neutral-400 hover:text-emerald-400 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface leading-none">Admin User</p>
+<p class="text-[10px] text-neutral-500 font-medium">Tournament Manager</p>
+</div>
+<img alt="User avatar" class="w-10 h-10 rounded-full bg-surface-container-highest border border-primary/20" data-alt="professional male avatar with sports attire, clean digital illustration style, cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDztcZzqROjFXgf7Ut-j87Mcn4IRlecpZAwCTWY-IFEUXY07yaDlR5Xx8mOEfuGjg_eeQv-avfFS1ePBrOTH1XUflBcD78evv_5S9EgzD-TEbQ5ec1uFtIkEmBnae-c1gfw16qqRkVuQvZVfCeaU0c4skqc7rrgaujwvujywBRJK80FZUqZzW4OSOyCANVM6tieVkTVbgx3QfU7FzXA7gZpA5RgdU0zUUhTZR5YHXw0eASKpEYJp4Hq4RuNBFQRtKp9Tos5j5AoJZA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="p-10 space-y-8">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="text-4xl font-black font-headline tracking-tighter text-on-surface mb-2 italic">Gestión de Fixture y Resultados</h2>
+<p class="text-on-surface-variant max-w-xl">Controla cada detalle del torneo. Actualiza marcadores en tiempo real y gestiona eventos disciplinarios para mantener la integridad de la liga.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<label class="block text-[10px] font-bold text-primary uppercase tracking-widest mb-1 ml-1">Selector de Fase</label>
+<div class="bg-surface-container-high px-4 py-3 rounded-lg border border-outline-variant/20 flex items-center gap-4 cursor-pointer hover:border-primary/50 transition-colors">
+<span class="font-bold text-on-surface">Jornada 1</span>
+<span class="material-symbols-outlined text-primary">expand_more</span>
+</div>
+</div>
+<button class="bg-surface-container-highest px-6 py-3 rounded-lg font-bold text-on-surface border border-outline-variant/20 hover:bg-surface-bright transition-colors flex items-center gap-2 mt-4">
+<span class="material-symbols-outlined">filter_list</span> Filtrar
+                    </button>
+</div>
+</div>
+<!-- Matches Feed -->
+<div class="space-y-4">
+<!-- Match Card 1 -->
+<div class="glass-card group hover:bg-surface-container-highest/90 transition-all duration-300 p-6 flex items-center justify-between gap-8 border border-outline-variant/5">
+<!-- Home Team -->
+<div class="flex flex-1 items-center gap-6 justify-end">
+<div class="text-right">
+<h3 class="text-lg font-extrabold font-headline uppercase tracking-tight">Real Madrid FC</h3>
+<span class="text-xs text-neutral-500 font-medium">Local</span>
+</div>
+<img class="w-16 h-16 rounded-xl object-contain p-2 bg-surface-container-low" data-alt="heraldic football crest of Real Madrid, white and gold theme, professional sports logo design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMzAt8GTTON40zFOSKCM51h5l_MB0i4d6qTvMOzrzeN4oK1C1EmfYAqRf3P4h27xSu2cE8ozLmiMOf3F5hO3ArSfJidKn6a63KSh_Dbsw5OWNyeyBqPZkS5QRyj3UEPvsYShoB0HmqhGLSTYZ7WWG9ItzNpeDda8y-IEwBMzNNEr0nM2pMArUWPBfXRHfFMnDRp8aKKSfsanjy-73cAdZhipd8szp_OkiLMsHEDz8e1qm-KPkTYJsAPWn7ZfPiYA0i6FRfYFz3RXU"/>
+</div>
+<!-- Score Controls -->
+<div class="flex flex-col items-center gap-3 min-w-[240px]">
+<div class="flex items-center gap-4">
+<input class="w-20 h-24 bg-surface-container-lowest border-none rounded-xl text-center text-5xl font-black font-headline text-primary focus:ring-2 focus:ring-primary/50 transition-all [appearance:textfield] [&amp;::-webkit-outer-spin-button]:appearance-none [&amp;::-webkit-inner-spin-button]:appearance-none" type="number" value="2"/>
+<span class="text-2xl font-black text-neutral-700 italic">:</span>
+<input class="w-20 h-24 bg-surface-container-lowest border-none rounded-xl text-center text-5xl font-black font-headline text-on-surface-variant focus:ring-2 focus:ring-primary/50 transition-all [appearance:textfield] [&amp;::-webkit-outer-spin-button]:appearance-none [&amp;::-webkit-inner-spin-button]:appearance-none" type="number" value="0"/>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
+<div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+<span class="text-[10px] font-bold text-primary uppercase tracking-tighter">En progreso - 64'</span>
+</div>
+</div>
+<!-- Away Team -->
+<div class="flex flex-1 items-center gap-6">
+<img class="w-16 h-16 rounded-xl object-contain p-2 bg-surface-container-low" data-alt="heraldic football crest of FC Barcelona, red and blue theme, professional sports logo design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXhzgWrX7QqXJ0DTQNE_2Hy-zwMRttrTG8xOdytAhuzXwjVkBF2_cB6BM-xEzGYQobDGPtWSzFsD3AnUtHv0M_-4vDpMbKC3nZoXOoBNCYhJ-oPy-ropix7nTmXh1iSeYNcLagUsltZG0i0_6VBYFc-xlbCbiTjzWSkTja51dgkrZPJhwaKbMqF1sljGtN66zaItMs99ca3_qw9L1VBgt5VIVXvr8Ft3Z-FOT0qIpvIIJtuJg01xQca9a_JYI6401QqbJenCUvWr8"/>
+<div class="text-left">
+<h3 class="text-lg font-extrabold font-headline uppercase tracking-tight">Barcelona FC</h3>
+<span class="text-xs text-neutral-500 font-medium">Visitante</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-2">
+<button class="p-3 bg-surface-container-lowest text-primary rounded-lg hover:bg-primary hover:text-on-primary-container transition-all flex items-center justify-center group/btn" title="Agregar evento">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+<span class="w-0 overflow-hidden group-hover/btn:w-auto group-hover/btn:ml-2 whitespace-nowrap text-xs font-bold transition-all">Agregar evento</span>
+</button>
+<button class="p-3 bg-surface-container-lowest text-neutral-400 rounded-lg hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Match Card 2 -->
+<div class="glass-card group hover:bg-surface-container-highest/90 transition-all duration-300 p-6 flex items-center justify-between gap-8 border border-outline-variant/5">
+<!-- Home Team -->
+<div class="flex flex-1 items-center gap-6 justify-end">
+<div class="text-right">
+<h3 class="text-lg font-extrabold font-headline uppercase tracking-tight">Manchester City</h3>
+<span class="text-xs text-neutral-500 font-medium">Local</span>
+</div>
+<img class="w-16 h-16 rounded-xl object-contain p-2 bg-surface-container-low" data-alt="sky blue circular football crest for Manchester City, modern professional sports branding" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG0ox0FFduPASHuGpjnc1f_auoX5vxMlx3ta6bA08RXQpTGbJkfG_oohbCTNnlBzFGZW8nt_pLvceYxLuiZivLBCHufMDjyVd8PXdlT_CeUCaH_6UKb2UKof-hSbSVNF2wvuXcFVKtYerATWrkcfXQ4JgQQsXPhNgZnMhBSdiGViz2HFnJS_1cCB0xNlzOnryEvb6Wzv4mcXxjY_6gjmvLI1IT4PznVLc4njNhvgNPb9dIp__X9MNjWeB7Odnte75zZn-GZLtJ2ps"/>
+</div>
+<!-- Score Controls -->
+<div class="flex flex-col items-center gap-3 min-w-[240px]">
+<div class="flex items-center gap-4">
+<input class="w-20 h-24 bg-surface-container-lowest border-none rounded-xl text-center text-5xl font-black font-headline text-on-surface-variant focus:ring-2 focus:ring-primary/50 transition-all [appearance:textfield] [&amp;::-webkit-outer-spin-button]:appearance-none [&amp;::-webkit-inner-spin-button]:appearance-none" type="number" value="0"/>
+<span class="text-2xl font-black text-neutral-700 italic">:</span>
+<input class="w-20 h-24 bg-surface-container-lowest border-none rounded-xl text-center text-5xl font-black font-headline text-on-surface-variant focus:ring-2 focus:ring-primary/50 transition-all [appearance:textfield] [&amp;::-webkit-outer-spin-button]:appearance-none [&amp;::-webkit-inner-spin-button]:appearance-none" type="number" value="0"/>
+</div>
+<span class="text-[10px] font-bold text-neutral-500 uppercase tracking-tighter">Programado - 21:00 HS</span>
+</div>
+<!-- Away Team -->
+<div class="flex flex-1 items-center gap-6">
+<img class="w-16 h-16 rounded-xl object-contain p-2 bg-surface-container-low" data-alt="liverpool football club crest, red with liver bird symbol, professional high-end sports logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUVdo7z8UHrHEcoOyvMyyoJqOjv6PupIFglYdcqUftp8kk_F2b4899o2a6YtOxuXAJXEmp7TFKATm2gx0dqTWenMGB3sD6Iba2KRztbeS1knrzHTpADzLOun35Rrnjwk_hqoK8RI55CoOVrMUadyLBIgHk31M1bKcHiHY3P4JomflntKVCQ5LbrBE6vYziBq3sHpPdooA_Z8j4Y7JRpCDjnvtfgsYNdedUFrLdUXCjBHcr9QhatoK3u8uEZaYEgqLno9-JZNYYO-8"/>
+<div class="text-left">
+<h3 class="text-lg font-extrabold font-headline uppercase tracking-tight">Liverpool FC</h3>
+<span class="text-xs text-neutral-500 font-medium">Visitante</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-2">
+<button class="p-3 bg-surface-container-lowest text-primary rounded-lg hover:bg-primary hover:text-on-primary-container transition-all flex items-center justify-center group/btn" title="Agregar evento">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+<span class="w-0 overflow-hidden group-hover/btn:w-auto group-hover/btn:ml-2 whitespace-nowrap text-xs font-bold transition-all">Agregar evento</span>
+</button>
+<button class="p-3 bg-surface-container-lowest text-neutral-400 rounded-lg hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Match Card 3 -->
+<div class="glass-card group hover:bg-surface-container-highest/90 transition-all duration-300 p-6 flex items-center justify-between gap-8 border border-outline-variant/5">
+<!-- Home Team -->
+<div class="flex flex-1 items-center gap-6 justify-end">
+<div class="text-right">
+<h3 class="text-lg font-extrabold font-headline uppercase tracking-tight">Juventus FC</h3>
+<span class="text-xs text-neutral-500 font-medium">Local</span>
+</div>
+<img class="w-16 h-16 rounded-xl object-contain p-2 bg-surface-container-low" data-alt="modern minimalist J logo for Juventus football club, black and white professional branding" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn6bIJyWWMSweQ8OuTj7wZyyOqWnDJ4vKTMaqw8lZLPOvCLFH4b41_S14RnsPQGsG4mK03sunC2HmVXDoX47Cps-zSCUZEam5JSNjcQbUnaUL1fBKMdC_1FTfcW9EhZza5nF04DO1hA9yqQdk4q7L0ovWkdE9kHnzsXsnmomlueDCEWrbA__Tpfv1wIIJzwKDeBeV41pXAB7Zcr7RPlWSmTAYp2_jdTsxSQQm4R8s6QZeILmv8BlTAZAh6XbCv4-21l7Th-fgw9GU"/>
+</div>
+<!-- Score Controls -->
+<div class="flex flex-col items-center gap-3 min-w-[240px]">
+<div class="flex items-center gap-4">
+<input class="w-20 h-24 bg-surface-container-lowest border-none rounded-xl text-center text-5xl font-black font-headline text-on-surface-variant focus:ring-2 focus:ring-primary/50 transition-all [appearance:textfield] [&amp;::-webkit-outer-spin-button]:appearance-none [&amp;::-webkit-inner-spin-button]:appearance-none" type="number" value="1"/>
+<span class="text-2xl font-black text-neutral-700 italic">:</span>
+<input class="w-20 h-24 bg-surface-container-lowest border-none rounded-xl text-center text-5xl font-black font-headline text-primary focus:ring-2 focus:ring-primary/50 transition-all [appearance:textfield] [&amp;::-webkit-outer-spin-button]:appearance-none [&amp;::-webkit-inner-spin-button]:appearance-none" type="number" value="3"/>
+</div>
+<span class="text-[10px] font-bold text-neutral-500 uppercase tracking-tighter">Finalizado</span>
+</div>
+<!-- Away Team -->
+<div class="flex flex-1 items-center gap-6">
+<img class="w-16 h-16 rounded-xl object-contain p-2 bg-surface-container-low" data-alt="AC Milan football crest, red and black vertical stripes, traditional professional sports logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM01Nn56ieU0RqWGcKs1N-VltMTRU0VG7aBEZmS4N2YxCNiK6uv21RtBSpObeD0QRZNQ1_ZeCUEycYGXYxiUmBvwj6gcWHz_O7r_DYa0qbio8m63L-bYSXGksnUHNsSdsp7EREx0qhKjJWNgkSc62i_ZDe5L8VhPWICGVkSq_lcEpCqRFIuADtR-arUBxwJSxzLt0E9wPu9N4c7jTHwMIM62455utZi4YnfEXSXaKygDX3CyP2VhiKjclgX2OeAuqm409T393RZWA"/>
+<div class="text-left">
+<h3 class="text-lg font-extrabold font-headline uppercase tracking-tight">AC Milan</h3>
+<span class="text-xs text-neutral-500 font-medium">Visitante</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-2 opacity-30 pointer-events-none">
+<button class="p-3 bg-surface-container-lowest text-primary rounded-lg transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+</button>
+<button class="p-3 bg-surface-container-lowest text-neutral-400 rounded-lg transition-all">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Stats Overlay (Bento-lite) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-12">
+<div class="surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Total Goles</p>
+<p class="text-3xl font-black font-headline text-primary">12</p>
+</div>
+<div class="surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Tarjetas Amarillas</p>
+<p class="text-3xl font-black font-headline text-tertiary">4</p>
+</div>
+<div class="surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Tarjetas Rojas</p>
+<p class="text-3xl font-black font-headline text-error">1</p>
+</div>
+<div class="surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<p class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Árbitros Activos</p>
+<p class="text-3xl font-black font-headline text-on-surface">6</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Floating Action Button) - Create Event Quick Access -->
+<button class="fixed bottom-10 right-10 w-16 h-16 rounded-full bg-primary text-on-primary-container flex items-center justify-center shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</body></html>
