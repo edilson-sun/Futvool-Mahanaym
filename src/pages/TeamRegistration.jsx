@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function TeamRegistration() {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -15,6 +16,24 @@ export default function TeamRegistration() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+  useEffect(() => {
+    async function checkExistingTeam() {
+      if (currentUser?.email) {
+        try {
+          const res = await fetch(`${API_URL}/api/teams/my-team?email=${currentUser.email}`);
+          if (res.ok) {
+            navigate('/mi-equipo');
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+    checkExistingTeam();
+  }, [currentUser, navigate, API_URL]);
 
   const handleInputChange = (e) => {
     setFormData({

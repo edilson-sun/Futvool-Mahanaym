@@ -1,9 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
   const path = location.pathname;
+  const [notifications, setNotifications] = useState([]);
+  
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/notifications`);
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await fetch(`${API_URL}/api/notifications/read-all`, { method: 'PUT' });
+      setNotifications([]);
+    } catch (error) {
+      console.error('Error marking notifications as read:', error);
+    }
+  };
+
+  const handleCreateTournament = async () => {
+    if (!confirm('¿Deseas iniciar un nuevo torneo? Esto reiniciará el fixture actual.')) return;
+    try {
+      const res = await fetch(`${API_URL}/api/matches/generate`, { method: 'POST' });
+      if (res.ok) {
+        alert('Torneo creado con éxito (Fixture de 2 equipos generado)');
+        window.location.reload(); // Quick way to refresh data across pages
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Error al crear torneo');
+      }
+    } catch (error) {
+      alert('Error de conexión');
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary-container">
@@ -25,7 +71,7 @@ export default function AdminLayout({ children }) {
           </Link>
           <Link
             to="/admin/fixture"
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-manrope text-sm font-medium transition-all duration-300 ${
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-manrope text-sm font-medium transition-all duration-100 ${
               path.includes('/fixture') ? 'text-emerald-400 bg-emerald-500/5 border-r-4 border-emerald-500' : 'text-neutral-500 hover:text-emerald-300 hover:bg-neutral-800'
             }`}
           >
@@ -53,7 +99,10 @@ export default function AdminLayout({ children }) {
                 <p className="text-[10px] text-on-surface-variant">Temporada 2024</p>
               </div>
             </div>
-            <button className="w-full py-2 bg-primary text-on-primary-container text-xs font-bold rounded-lg hover:brightness-110 transition-all">
+            <button 
+              onClick={handleCreateTournament}
+              className="w-full py-2 bg-primary text-on-primary-container text-xs font-bold rounded-lg hover:brightness-110 transition-all"
+            >
               Crear Torneo
             </button>
           </div>
@@ -75,9 +124,19 @@ export default function AdminLayout({ children }) {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <button className="relative p-2 text-on-surface-variant hover:bg-emerald-500/10 rounded-full transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-neutral-950"></span>
+            <button 
+              onClick={markAllAsRead}
+              className={`relative p-2 text-white hover:bg-emerald-500/10 rounded-full transition-colors group ${notifications.length > 0 ? 'animate-bounce' : ''}`}
+            >
+              <span className="material-symbols-outlined group-hover:scale-110 transition-transform">notifications</span>
+              {notifications.length > 0 && (
+                <>
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-neutral-950 shadow-[0_0_8px_rgba(107,254,156,0.6)] animate-ping"></span>
+                  <span className="absolute -top-1 -right-1 bg-primary text-black text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-neutral-950 shadow-lg">
+                    {notifications.length}
+                  </span>
+                </>
+              )}
             </button>
             <div className="flex items-center gap-3 pl-6 border-l border-outline-variant/20">
               <div className="text-right">
@@ -96,3 +155,4 @@ export default function AdminLayout({ children }) {
     </div>
   );
 }
+

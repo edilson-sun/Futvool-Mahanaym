@@ -40,6 +40,19 @@ export default function AdminTeams() {
     }
   };
 
+  const deleteTeam = async (id, name) => {
+    if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo "${name}"? Esta acción no se puede deshacer.`)) return;
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/teams/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Error al eliminar equipo');
+      setTeams(teams.filter(t => t.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+
   const statusMap = {
     pending: { label: 'Pendiente', color: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' },
     approved: { label: 'Aprobado', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
@@ -103,41 +116,52 @@ export default function AdminTeams() {
                     </span>
                   </td>
                   <td className="p-4">
-                    {team.status === 'pending' && (
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => changeStatus(team.id, 'approved')}
-                          className="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 p-2 rounded-lg transition-colors tooltip"
-                          title="Aprobar"
-                        >
-                          <span className="material-symbols-outlined text-sm">check</span>
-                        </button>
+                    <div className="flex items-center gap-3">
+                      {team.status === 'pending' && (
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => changeStatus(team.id, 'approved')}
+                            className="bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 p-2 rounded-lg transition-colors tooltip"
+                            title="Aprobar"
+                          >
+                            <span className="material-symbols-outlined text-sm">check</span>
+                          </button>
+                          <button 
+                            onClick={() => changeStatus(team.id, 'rejected')}
+                            className="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-lg transition-colors tooltip"
+                            title="Rechazar"
+                          >
+                            <span className="material-symbols-outlined text-sm">close</span>
+                          </button>
+                        </div>
+                      )}
+                      {team.status === 'approved' && (
                         <button 
                           onClick={() => changeStatus(team.id, 'rejected')}
-                          className="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-lg transition-colors tooltip"
-                          title="Rechazar"
+                          className="text-xs px-2 py-1 text-on-surface-variant hover:text-red-400 transition-colors bg-surface-container rounded"
                         >
-                          <span className="material-symbols-outlined text-sm">close</span>
+                          Revocar
                         </button>
-                      </div>
-                    )}
-                    {team.status === 'approved' && (
+                      )}
+                      {team.status === 'rejected' && (
+                        <button 
+                          onClick={() => changeStatus(team.id, 'approved')}
+                          className="text-xs px-2 py-1 text-on-surface-variant hover:text-emerald-400 transition-colors bg-surface-container rounded"
+                        >
+                          Aprobar
+                        </button>
+                      )}
+                      
                       <button 
-                        onClick={() => changeStatus(team.id, 'rejected')}
-                        className="text-xs px-2 py-1 text-on-surface-variant hover:text-red-400 transition-colors"
+                        onClick={() => deleteTeam(team.id, team.name)}
+                        className="p-2 text-on-surface-variant hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                        title="Eliminar Equipo"
                       >
-                        Revocar
+                        <span className="material-symbols-outlined text-sm">delete</span>
                       </button>
-                    )}
-                    {team.status === 'rejected' && (
-                      <button 
-                         onClick={() => changeStatus(team.id, 'approved')}
-                        className="text-xs px-2 py-1 text-on-surface-variant hover:text-emerald-400 transition-colors"
-                      >
-                         Aprobar
-                      </button>
-                    )}
+                    </div>
                   </td>
+
                 </tr>
               ))}
             </tbody>

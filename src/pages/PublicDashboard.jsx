@@ -1,15 +1,100 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function PublicDashboard() {
+  const [standings, setStandings] = useState([]);
+  const [scorers, setScorers] = useState([]);
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+  const fetchData = async () => {
+    try {
+      const [standingsRes, playersRes, matchesRes] = await Promise.all([
+        fetch(`${API_URL}/api/standings`),
+        fetch(`${API_URL}/api/players`),
+        fetch(`${API_URL}/api/matches`)
+      ]);
+      
+      const standingsData = await standingsRes.json();
+      const playersData = await playersRes.json();
+      const matchesData = await matchesRes.json();
+
+      setStandings(standingsData);
+      setScorers(playersData.sort((a, b) => b.goals - a.goals).slice(0, 5));
+      // Filter next 4 upcoming or recently finished matches
+      setMatches(matchesData.slice(-4).reverse());
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="animate-in fade-in duration-700">
+      <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300 font-headline mb-4 tracking-tighter">
+            Liga Mahanaym
+          </h1>
+          <p className="text-on-surface-variant font-medium text-lg md:text-xl font-manrope">
+            Torneo Clausura 2024
+          </p>
+        </div>
+        <div className="hidden lg:flex items-center gap-4 bg-surface-container-high p-4 rounded-2xl border border-outline-variant/10">
+           <div className="text-right">
+             <p className="text-[10px] uppercase font-black text-on-surface-variant tracking-widest">Estado del Torneo</p>
+             <p className="text-sm font-bold text-white">Fase de Grupos</p>
+           </div>
+           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+             <span className="material-symbols-outlined text-primary text-sm">paddlestat</span>
+           </div>
+        </div>
+      </div>
+
+      {/* Matches Preview */}
       <div className="mb-12">
-        <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300 font-headline mb-4 tracking-tighter">
-          Liga Mahanaym
-        </h1>
-        <p className="text-on-surface-variant font-medium text-lg md:text-xl font-manrope">
-          Edición de Verano 2024
-        </p>
+        <h2 className="text-xl font-bold font-headline tracking-tight flex items-center gap-2 mb-6">
+          <span className="material-symbols-outlined text-primary">event_upcoming</span>
+          Próximos Encuentros
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+           {loading ? (
+             [1,2,3,4].map(i => <div key={i} className="h-32 bg-surface-container-high rounded-2xl animate-pulse"></div>)
+           ) : matches.length === 0 ? (
+             <div className="col-span-full py-8 text-center bg-surface-container-low rounded-2xl border border-dashed border-outline-variant/20 italic text-on-surface-variant text-sm">
+               No hay partidos programados próximamente.
+             </div>
+           ) : matches.map(match => (
+             <div key={match.id} className="glass-card p-5 rounded-2xl border border-outline-variant/5 flex flex-col items-center justify-center gap-4 hover:border-primary/20 transition-all group">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex flex-col items-center gap-2 flex-1">
+                    <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.home_team_name.slice(0,2).toUpperCase()}</div>
+                    <span className="text-[9px] uppercase font-black text-on-surface-variant truncate w-full text-center">{match.home_team_name}</span>
+                  </div>
+                  <div className="flex-1 flex flex-col items-center">
+                     {match.status === 'finished' ? (
+                       <span className="text-xl font-black text-white">{match.home_goals} - {match.away_goals}</span>
+                     ) : (
+                       <div className="bg-primary/10 px-2 py-0.5 rounded">
+                         <span className="text-[10px] font-black text-primary uppercase">{match.match_time.slice(0,5)}</span>
+                       </div>
+                     )}
+                     <span className="text-[8px] uppercase font-bold text-on-surface-variant mt-1">{match.status === 'finished' ? 'FINAL' : match.match_date.split('T')[0]}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 flex-1">
+                    <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.away_team_name.slice(0,2).toUpperCase()}</div>
+                    <span className="text-[9px] uppercase font-black text-on-surface-variant truncate w-full text-center">{match.away_team_name}</span>
+                  </div>
+                </div>
+             </div>
+           ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -19,117 +104,64 @@ export default function PublicDashboard() {
               <span className="material-symbols-outlined text-primary">leaderboard</span>
               Tabla de Posiciones
             </h2>
-            <select className="bg-surface-container-high border-none text-sm text-on-surface rounded-lg px-4 py-2 outline-none focus:ring-1 focus:ring-primary cursor-pointer">
-              <option>Fase de Grupos</option>
-              <option>Eliminatorias</option>
-            </select>
           </div>
 
-          <div className="glass-panel rounded-2xl overflow-hidden border border-outline-variant/10 shadow-2xl relative">
+          <div className="glass-panel rounded-2xl overflow-hidden border border-outline-variant/10 shadow-2xl relative min-h-[400px]">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-tertiary to-primary"></div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[700px]">
-                <thead>
-                  <tr className="bg-surface-container-highest/50 border-b border-outline-variant/10 text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
-                    <th className="p-4 pl-6 w-16 text-center">Pos</th>
-                    <th className="p-4">Club</th>
-                    <th className="p-4 text-center w-12">PJ</th>
-                    <th className="p-4 text-center w-12">G</th>
-                    <th className="p-4 text-center w-12">E</th>
-                    <th className="p-4 text-center w-12">P</th>
-                    <th className="p-4 text-center w-12">GF</th>
-                    <th className="p-4 text-center w-12">GC</th>
-                    <th className="p-4 text-center w-12">DIF</th>
-                    <th className="p-4 pr-6 text-center w-16 text-primary">PTS</th>
-                  </tr>
-                </thead>
-                <tbody className="font-manrope text-sm font-medium">
-                  {/* Row 1 */}
-                  <tr className="border-b border-outline-variant/5 hover:bg-surface-container-high/50 transition-colors group">
-                    <td className="p-4 pl-6 text-center">
-                      <div className="w-6 h-6 rounded-full bg-primary text-black font-bold flex items-center justify-center text-xs mx-auto group-hover:scale-110 transition-transform shadow-[0_0_10px_rgba(107,254,156,0.3)]">1</div>
-                    </td>
-                    <td className="p-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
-                        <span className="material-symbols-outlined text-sm text-primary">shield</span>
-                      </div>
-                      <span className="font-bold text-white tracking-tight">Real Mahanaym</span>
-                    </td>
-                    <td className="p-4 text-center text-on-surface-variant">10</td>
-                    <td className="p-4 text-center text-on-surface-variant">8</td>
-                    <td className="p-4 text-center text-on-surface-variant">1</td>
-                    <td className="p-4 text-center text-on-surface-variant">1</td>
-                    <td className="p-4 text-center text-on-surface-variant">24</td>
-                    <td className="p-4 text-center text-on-surface-variant">8</td>
-                    <td className="p-4 text-center text-emerald-400">+16</td>
-                    <td className="p-4 pr-6 text-center font-black text-primary text-base">25</td>
-                  </tr>
-                  
-                  {/* Row 2 */}
-                  <tr className="border-b border-outline-variant/5 hover:bg-surface-container-high/50 transition-colors group">
-                    <td className="p-4 pl-6 text-center">
-                      <div className="w-6 h-6 rounded-full bg-surface-container-highest text-white font-bold flex items-center justify-center text-xs mx-auto">2</div>
-                    </td>
-                    <td className="p-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
-                        <span className="material-symbols-outlined text-sm text-cyan-400">shield</span>
-                      </div>
-                      <span className="font-bold text-white tracking-tight">Atlético Central</span>
-                    </td>
-                    <td className="p-4 text-center text-on-surface-variant">10</td>
-                    <td className="p-4 text-center text-on-surface-variant">7</td>
-                    <td className="p-4 text-center text-on-surface-variant">2</td>
-                    <td className="p-4 text-center text-on-surface-variant">1</td>
-                    <td className="p-4 text-center text-on-surface-variant">18</td>
-                    <td className="p-4 text-center text-on-surface-variant">9</td>
-                    <td className="p-4 text-center text-emerald-400">+9</td>
-                    <td className="p-4 pr-6 text-center font-black text-primary text-base">23</td>
-                  </tr>
-
-                  {/* Row 3 */}
-                  <tr className="border-b border-outline-variant/5 hover:bg-surface-container-high/50 transition-colors group">
-                     <td className="p-4 pl-6 text-center">
-                      <div className="w-6 h-6 rounded-full bg-surface-container-highest text-white font-bold flex items-center justify-center text-xs mx-auto">3</div>
-                    </td>
-                    <td className="p-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
-                        <span className="material-symbols-outlined text-sm text-orange-400">shield</span>
-                      </div>
-                      <span className="font-bold text-white tracking-tight">Los Pibes FC</span>
-                    </td>
-                    <td className="p-4 text-center text-on-surface-variant">10</td>
-                    <td className="p-4 text-center text-on-surface-variant">6</td>
-                    <td className="p-4 text-center text-on-surface-variant">1</td>
-                    <td className="p-4 text-center text-on-surface-variant">3</td>
-                    <td className="p-4 text-center text-on-surface-variant">15</td>
-                    <td className="p-4 text-center text-on-surface-variant">12</td>
-                    <td className="p-4 text-center text-emerald-400">+3</td>
-                    <td className="p-4 pr-6 text-center font-black text-primary text-base">19</td>
-                  </tr>
-                  
-                  {/* Row 4 */}
-                  <tr className="border-b border-outline-variant/5 hover:bg-surface-container-high/50 transition-colors group">
-                     <td className="p-4 pl-6 text-center">
-                      <div className="w-6 h-6 rounded-full bg-surface-container-highest text-error font-bold flex items-center justify-center text-xs mx-auto">4</div>
-                    </td>
-                    <td className="p-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
-                        <span className="material-symbols-outlined text-sm text-purple-400">shield</span>
-                      </div>
-                      <span className="font-bold text-white tracking-tight">Deportivo Norte</span>
-                    </td>
-                    <td className="p-4 text-center text-on-surface-variant">10</td>
-                    <td className="p-4 text-center text-on-surface-variant">2</td>
-                    <td className="p-4 text-center text-on-surface-variant">1</td>
-                    <td className="p-4 text-center text-on-surface-variant">7</td>
-                    <td className="p-4 text-center text-on-surface-variant">8</td>
-                    <td className="p-4 text-center text-on-surface-variant">20</td>
-                    <td className="p-4 text-center text-error">-12</td>
-                    <td className="p-4 pr-6 text-center font-black text-primary text-base">7</td>
-                  </tr>
-
-                </tbody>
-              </table>
+              {loading ? (
+                <div className="flex justify-center items-center h-64">
+                   <span className="material-symbols-outlined animate-spin text-4xl text-primary">sync</span>
+                </div>
+              ) : (
+                <table className="w-full text-left border-collapse min-w-[700px]">
+                  <thead>
+                    <tr className="bg-surface-container-highest/50 border-b border-outline-variant/10 text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
+                      <th className="p-4 pl-6 w-16 text-center">Pos</th>
+                      <th className="p-4">Club</th>
+                      <th className="p-4 text-center w-12">PJ</th>
+                      <th className="p-4 text-center w-12">G</th>
+                      <th className="p-4 text-center w-12">E</th>
+                      <th className="p-4 text-center w-12">P</th>
+                      <th className="p-4 text-center w-12">GF</th>
+                      <th className="p-4 text-center w-12">GC</th>
+                      <th className="p-4 text-center w-12">DIF</th>
+                      <th className="p-4 pr-6 text-center w-16 text-primary">PTS</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-manrope text-sm font-medium">
+                    {standings.length === 0 ? (
+                      <tr>
+                        <td colSpan="10" className="p-8 text-center text-on-surface-variant">Sin datos de posiciones disponibles.</td>
+                      </tr>
+                    ) : standings.map((team, index) => (
+                      <tr key={team.team_id} className="border-b border-outline-variant/5 hover:bg-surface-container-high/50 transition-colors group">
+                        <td className="p-4 pl-6 text-center">
+                          <div className={`w-6 h-6 rounded-full font-bold flex items-center justify-center text-xs mx-auto group-hover:scale-110 transition-transform ${index === 0 ? 'bg-primary text-black shadow-[0_0_10px_rgba(107,254,156,0.3)]' : 'bg-surface-container-highest text-white'}`}>
+                            {index + 1}
+                          </div>
+                        </td>
+                        <td className="p-4 flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
+                            <span className={`material-symbols-outlined text-sm ${index === 0 ? 'text-primary' : 'text-on-surface-variant'}`}>shield</span>
+                          </div>
+                          <span className="font-bold text-white tracking-tight">{team.team_name}</span>
+                        </td>
+                        <td className="p-4 text-center text-on-surface-variant">{team.played}</td>
+                        <td className="p-4 text-center text-on-surface-variant">{team.won}</td>
+                        <td className="p-4 text-center text-on-surface-variant">{team.drawn}</td>
+                        <td className="p-4 text-center text-on-surface-variant">{team.lost}</td>
+                        <td className="p-4 text-center text-on-surface-variant">{team.goals_for}</td>
+                        <td className="p-4 text-center text-on-surface-variant">{team.goals_against}</td>
+                        <td className={`p-4 text-center ${team.goal_diff >= 0 ? 'text-emerald-400' : 'text-error'}`}>
+                          {team.goal_diff > 0 ? `+${team.goal_diff}` : team.goal_diff}
+                        </td>
+                        <td className="p-4 pr-6 text-center font-black text-primary text-base">{team.points}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
@@ -137,55 +169,34 @@ export default function PublicDashboard() {
         <div className="space-y-8">
           <h2 className="text-xl font-bold font-headline tracking-tight flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">local_fire_department</span>
-            Top Scorers
+            Goleadores
           </h2>
           
           <div className="space-y-4">
-            {/* Player 1 */}
-            <div className="glass-card rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
-              <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-primary/10 to-transparent"></div>
-              <div className="w-12 h-12 rounded-full bg-surface-container-highest flex border-2 border-primary/30 items-center justify-center">
-                <span className="material-symbols-outlined text-primary">person</span>
+            {loading ? (
+              <div className="py-10 text-center">
+                 <span className="material-symbols-outlined animate-spin text-primary">sync</span>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-sm tracking-tight group-hover:text-primary transition-colors">Carlos Mendoza</h3>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Real Mahanaym</p>
+            ) : scorers.length === 0 ? (
+              <p className="text-on-surface-variant text-center py-4">No hay datos de goleadores.</p>
+            ) : scorers.map((player, index) => (
+              <div key={player.id} className="glass-card rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+                {index === 0 && <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-primary/10 to-transparent"></div>}
+                <div className={`w-12 h-12 rounded-full bg-surface-container-highest flex border ${index === 0 ? 'border-primary/30' : 'border-outline-variant/30'} items-center justify-center`}>
+                  <span className={`material-symbols-outlined ${index === 0 ? 'text-primary' : 'text-on-surface-variant'}`}>person</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className={`font-bold text-sm tracking-tight transition-colors ${index === 0 ? 'group-hover:text-primary text-white' : 'group-hover:text-white text-on-surface-variant'}`}>
+                    {player.name}
+                  </h3>
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">{player.team_name || 'Individual'}</p>
+                </div>
+                <div className="text-right pr-4 relative z-10">
+                  <p className={`text-2xl font-black ${index === 0 ? 'text-white' : 'text-on-surface-variant'}`}>{player.goals}</p>
+                  <p className={`text-[9px] uppercase font-bold tracking-widest ${index === 0 ? 'text-primary' : 'text-on-surface-variant/60'}`}>Goles</p>
+                </div>
               </div>
-              <div className="text-right pr-4 relative z-10">
-                <p className="text-2xl font-black text-white">12</p>
-                <p className="text-[9px] text-primary uppercase font-bold tracking-widest">Goles</p>
-              </div>
-            </div>
-
-            {/* Player 2 */}
-            <div className="glass-card rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
-              <div className="w-12 h-12 rounded-full bg-surface-container-highest flex border border-outline-variant/30 items-center justify-center">
-                <span className="material-symbols-outlined text-on-surface-variant">person</span>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-sm tracking-tight group-hover:text-white text-on-surface-variant transition-colors">Juan Pérez</h3>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Atlético Central</p>
-              </div>
-              <div className="text-right pr-4 relative z-10">
-                <p className="text-xl font-black text-on-surface-variant">9</p>
-                <p className="text-[9px] text-on-surface-variant uppercase font-bold tracking-widest">Goles</p>
-              </div>
-            </div>
-
-            {/* Player 3 */}
-            <div className="glass-card rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
-              <div className="w-12 h-12 rounded-full bg-surface-container-highest flex border border-outline-variant/30 items-center justify-center">
-                <span className="material-symbols-outlined text-on-surface-variant">person</span>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-sm tracking-tight group-hover:text-white text-on-surface-variant transition-colors">Diego López</h3>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Los Pibes FC</p>
-              </div>
-              <div className="text-right pr-4 relative z-10">
-                <p className="text-xl font-black text-on-surface-variant">7</p>
-                <p className="text-[9px] text-on-surface-variant uppercase font-bold tracking-widest">Goles</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

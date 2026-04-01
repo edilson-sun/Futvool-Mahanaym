@@ -11,6 +11,7 @@ import AdminLayout from './layouts/AdminLayout';
 
 import PublicDashboard from './pages/PublicDashboard';
 import TeamRegistration from './pages/TeamRegistration';
+import MyTeam from './pages/MyTeam';
 
 import AdminDashboard from './pages/AdminDashboard';
 import AdminMatches from './pages/AdminMatches';
@@ -32,6 +33,11 @@ function App() {
             <Route path="/registro" element={
               <ProtectedRoute>
                 <TeamRegistration />
+              </ProtectedRoute>
+            } />
+            <Route path="/mi-equipo" element={
+              <ProtectedRoute>
+                <MyTeam />
               </ProtectedRoute>
             } />
           </Route>
