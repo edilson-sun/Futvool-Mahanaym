@@ -2,12 +2,20 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { neon } from '@neondatabase/serverless';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Servir archivos estáticos del frontend (Vite build)
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Leer la base de datos segura desde el .env
 const sql = neon(process.env.DATABASE_URL);
@@ -362,6 +370,11 @@ app.put('/api/settings/venues', async (req, res) => {
   }
 });
 
+
+// 11. Manejo de rutas SPA (debe ir después de las API)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, async () => {

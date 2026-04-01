@@ -10,7 +10,7 @@ export default function MyTeam() {
   const [newPlayer, setNewPlayer] = useState({ name: '', number: '', position: 'Portero' });
   const [error, setError] = useState('');
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const fetchTeamData = async () => {
     if (!currentUser?.email) return;

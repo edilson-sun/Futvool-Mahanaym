@@ -7,7 +7,7 @@ export default function AdminTeams() {
 
   const fetchTeams = async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || '';
       const res = await fetch(`${API_URL}/api/teams`);
       if (!res.ok) throw new Error('Error al cargar equipos');
       const data = await res.json();
@@ -25,7 +25,7 @@ export default function AdminTeams() {
 
   const changeStatus = async (id, newStatus) => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || '';
       const res = await fetch(`${API_URL}/api/teams/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -43,7 +43,7 @@ export default function AdminTeams() {
   const deleteTeam = async (id, name) => {
     if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo "${name}"? Esta acción no se puede deshacer.`)) return;
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || '';
       const res = await fetch(`${API_URL}/api/teams/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Error al eliminar equipo');
       setTeams(teams.filter(t => t.id !== id));

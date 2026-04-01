@@ -17,7 +17,7 @@ export default function TeamRegistration() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   useEffect(() => {
     async function checkExistingTeam() {
@@ -50,7 +50,7 @@ export default function TeamRegistration() {
     setError(null);
     
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${API_URL}/api/teams`, {
         method: 'POST',
         headers: {

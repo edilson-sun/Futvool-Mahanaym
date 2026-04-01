@@ -6,7 +6,7 @@ export default function AdminLayout({ children }) {
   const path = location.pathname;
   const [notifications, setNotifications] = useState([]);
   
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const fetchNotifications = async () => {
     try {

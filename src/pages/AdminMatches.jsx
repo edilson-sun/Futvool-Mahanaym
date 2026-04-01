@@ -7,7 +7,7 @@ export default function AdminMatches() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [scores, setScores] = useState({ home: 0, away: 0 });
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const fetchMatches = async () => {
     try {
