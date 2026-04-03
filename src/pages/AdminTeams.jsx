@@ -102,7 +102,16 @@ export default function AdminTeams() {
                 </tr>
               ) : teams.map((team) => (
                 <tr key={team.id} className="hover:bg-surface-container-highest/30 transition-colors">
-                  <td className="p-4 text-white font-bold">{team.name}</td>
+                  <td className="p-4 text-white font-bold flex items-center gap-3">
+                    {team.logo_url ? (
+                      <img src={team.logo_url} alt={team.name} className="w-10 h-10 object-cover rounded-full bg-surface-container-highest border border-outline-variant/20" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant border border-outline-variant/20">
+                        <span className="material-symbols-outlined text-sm">shield</span>
+                      </div>
+                    )}
+                    {team.name}
+                  </td>
                   <td className="p-4 text-on-surface-variant capitalize">{team.category}</td>
                   <td className="p-4 text-white">{team.captain_name}</td>
                   <td className="p-4 text-on-surface-variant">

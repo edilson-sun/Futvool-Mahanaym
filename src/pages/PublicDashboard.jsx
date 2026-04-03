@@ -74,7 +74,13 @@ export default function PublicDashboard() {
              <div key={match.id} className="glass-card p-5 rounded-2xl border border-outline-variant/5 flex flex-col items-center justify-center gap-4 hover:border-primary/20 transition-all group">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex flex-col items-center gap-2 flex-1">
-                    <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.home_team_name.slice(0,2).toUpperCase()}</div>
+                    {match.home_team_logo ? (
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant/10 shadow-inner overflow-hidden">
+                        <img src={match.home_team_logo} alt={match.home_team_name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.home_team_name.slice(0,2).toUpperCase()}</div>
+                    )}
                     <span className="text-[9px] uppercase font-black text-on-surface-variant truncate w-full text-center">{match.home_team_name}</span>
                   </div>
                   <div className="flex-1 flex flex-col items-center">
@@ -88,7 +94,13 @@ export default function PublicDashboard() {
                      <span className="text-[8px] uppercase font-bold text-on-surface-variant mt-1">{match.status === 'finished' ? 'FINAL' : match.match_date.split('T')[0]}</span>
                   </div>
                   <div className="flex flex-col items-center gap-2 flex-1">
-                    <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.away_team_name.slice(0,2).toUpperCase()}</div>
+                    {match.away_team_logo ? (
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant/10 shadow-inner overflow-hidden">
+                        <img src={match.away_team_logo} alt={match.away_team_name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.away_team_name.slice(0,2).toUpperCase()}</div>
+                    )}
                     <span className="text-[9px] uppercase font-black text-on-surface-variant truncate w-full text-center">{match.away_team_name}</span>
                   </div>
                 </div>
@@ -142,8 +154,12 @@ export default function PublicDashboard() {
                           </div>
                         </td>
                         <td className="p-4 flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
-                            <span className={`material-symbols-outlined text-sm ${index === 0 ? 'text-primary' : 'text-on-surface-variant'}`}>shield</span>
+                          <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center overflow-hidden p-0">
+                            {team.logo_url ? (
+                               <img src={team.logo_url} alt={team.team_name} className="w-full h-full object-cover" />
+                            ) : (
+                               <span className={`material-symbols-outlined text-sm ${index === 0 ? 'text-primary' : 'text-on-surface-variant'}`}>shield</span>
+                            )}
                           </div>
                           <div className="flex flex-col">
                             <span className={`font-bold tracking-tight ${team.status === 'disqualified' ? 'text-on-surface-variant line-through opacity-70' : 'text-white'}`}>{team.team_name}</span>

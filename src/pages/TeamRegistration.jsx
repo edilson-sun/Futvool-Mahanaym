@@ -11,7 +11,10 @@ export default function TeamRegistration() {
     category: '',
     captain_name: '',
     captain_phone: '',
+    logo_url: ''
   });
+
+  const [previewImage, setPreviewImage] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -40,6 +43,46 @@ export default function TeamRegistration() {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 250;
+        const MAX_HEIGHT = 250;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        setPreviewImage(dataUrl);
+        setFormData(prev => ({ ...prev, logo_url: dataUrl }));
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
@@ -84,7 +127,11 @@ export default function TeamRegistration() {
         <p className="text-on-surface-variant mb-10">Tu equipo <strong>{formData.name}</strong> ha sido enviado a la presidencia del torneo. Está en proceso de revisión.</p>
         
         <button 
-          onClick={() => { setSuccess(false); setFormData({name:'', category:'', captain_name:'', captain_phone:''}); }}
+          onClick={() => { 
+            setSuccess(false); 
+            setFormData({name:'', category:'', captain_name:'', captain_phone:'', logo_url:''}); 
+            setPreviewImage(null);
+          }}
           className="px-8 py-3 bg-surface-container rounded-xl font-bold text-white hover:bg-surface-container-highest transition-colors"
         >
           Inscribir otro equipo
@@ -127,6 +174,28 @@ export default function TeamRegistration() {
         )}
 
         <div className="space-y-8 z-10 relative">
+          {/* Logo Upload Section */}
+          <div className="flex flex-col items-center justify-center mb-8">
+            <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 text-center">Foto / Logo del Equipo/Escuela</label>
+            <div className="relative group cursor-pointer w-32 h-32 rounded-full overflow-hidden border-2 border-dashed border-outline-variant/30 hover:border-primary transition-colors bg-surface-container">
+              {previewImage ? (
+                <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+                  <span className="material-symbols-outlined text-3xl mb-1">add_photo_alternate</span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider">Subir</span>
+                </div>
+              )}
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={handleImageChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+            </div>
+            <p className="text-[10px] text-on-surface-variant mt-3 text-center max-w-xs">Se optimizará automáticamente a un tamaño ideal.</p>
+          </div>
+
           {/* Section 1 */}
           <div>
             <h3 className="text-lg font-bold text-emerald-300 flex items-center gap-2 mb-6 tracking-tight">
@@ -142,7 +211,7 @@ export default function TeamRegistration() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  placeholder="Ej. Real Mahanaym" 
+                  placeholder="Ej. Escuela Mahanaym" 
                   className="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-white placeholder-on-surface-variant/50 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface transition-all outline-none"
                 />
               </div>
@@ -156,9 +225,12 @@ export default function TeamRegistration() {
                   className="w-full bg-surface-container-highest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface transition-all outline-none appearance-none"
                 >
                   <option value="" disabled>Seleccione categoría...</option>
-                  <option value="libre">Libre (Mayores de 18)</option>
-                  <option value="veteranos">Veteranos (+35)</option>
-                  <option value="femenino">Femenino</option>
+                  <option value="sub-8">Sub 8</option>
+                  <option value="sub-10">Sub 10</option>
+                  <option value="sub-12">Sub 12</option>
+                  <option value="sub-14">Sub 14</option>
+                  <option value="sub-16">Sub 16</option>
+                  <option value="sub-18">Sub 18</option>
                 </select>
               </div>
             </div>

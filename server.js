@@ -31,9 +31,16 @@ async function initDB() {
         captain_phone VARCHAR(50) NOT NULL,
         user_email VARCHAR(255) NOT NULL,
         status VARCHAR(50) DEFAULT 'pending' NOT NULL,
+        logo_url TEXT,
         created_at TIMESTAMPTZ DEFAULT now()
     );
   `;
+  
+  try {
+    await sql`ALTER TABLE teams ADD COLUMN IF NOT EXISTS logo_url TEXT;`;
+  } catch(e) {
+    console.log("logo_url ya existe o error alterando:", e);
+  }
   
   await sql`
     CREATE TABLE IF NOT EXISTS players (
@@ -127,11 +134,11 @@ app.get('/api/teams', async (req, res) => {
 
 // 2. Registrar un nuevo equipo
 app.post('/api/teams', async (req, res) => {
-  const { name, category, captain_name, captain_phone, user_email } = req.body;
+  const { name, category, captain_name, captain_phone, user_email, logo_url } = req.body;
   try {
     const newTeam = await sql`
-      INSERT INTO teams (name, category, captain_name, captain_phone, user_email)
-      VALUES (${name}, ${category}, ${captain_name}, ${captain_phone}, ${user_email})
+      INSERT INTO teams (name, category, captain_name, captain_phone, user_email, logo_url)
+      VALUES (${name}, ${category}, ${captain_name}, ${captain_phone}, ${user_email}, ${logo_url || null})
       RETURNING *;
     `;
     
@@ -239,7 +246,9 @@ app.get('/api/matches', async (req, res) => {
       matches = await sql`
         SELECT m.*, 
                t1.name as home_team_name, 
-               t2.name as away_team_name 
+               t1.logo_url as home_team_logo,
+               t2.name as away_team_name,
+               t2.logo_url as away_team_logo
         FROM matches m
         JOIN teams t1 ON m.home_team_id = t1.id
         JOIN teams t2 ON m.away_team_id = t2.id
@@ -250,7 +259,9 @@ app.get('/api/matches', async (req, res) => {
       matches = await sql`
         SELECT m.*, 
                t1.name as home_team_name, 
-               t2.name as away_team_name 
+               t1.logo_url as home_team_logo,
+               t2.name as away_team_name,
+               t2.logo_url as away_team_logo
         FROM matches m
         JOIN teams t1 ON m.home_team_id = t1.id
         JOIN teams t2 ON m.away_team_id = t2.id
@@ -266,10 +277,10 @@ app.get('/api/matches', async (req, res) => {
 // 6. Generar Fixture aleatorio (Especial de 2 equipos según requerimiento)
 app.post('/api/matches/generate', async (req, res) => {
   try {
-    const approvedTeams = await sql`SELECT id, name FROM teams WHERE status = 'approved'`;
+    const approvedTeams = await sql`SELECT id, name, category FROM teams WHERE status = 'approved' ORDER BY category`;
     
-    if (approvedTeams.length !== 2) {
-      return res.status(400).json({ error: 'El torneo solo puede iniciar con exactamente 2 equipos aprobados' });
+    if (approvedTeams.length < 2) {
+      return res.status(400).json({ error: 'Se necesitan al menos 2 equipos aprobados en total para iniciar un torneo.' });
     }
 
     // Opcional: Limpiar partidos anteriores para iniciar "nuevo torneo"
@@ -278,25 +289,36 @@ app.post('/api/matches/generate', async (req, res) => {
     const generatedMatches = [];
     const startDate = new Date();
     
-    // Generamos un "Clásico" o serie de 3 partidos por ejemplo, o solo 1. 
-    // El usuario pidió "Crear Torneo", así que asumo un fixture de ida y vuelta o algo similar.
-    // Vamos a generar 2 partidos (Ida y Vuelta).
-    
-    for (let i = 0; i < 2; i++) {
-      const homeIdx = i === 0 ? 0 : 1;
-      const awayIdx = i === 0 ? 1 : 0;
-
-      const matchDate = new Date(startDate);
-      matchDate.setDate(startDate.getDate() + (i * 7)); // Una semana de diferencia
-      const time = '20:00:00';
-      
-      const newMatch = await sql`
-        INSERT INTO matches (home_team_id, away_team_id, match_date, match_time, field)
-        VALUES (${approvedTeams[homeIdx].id}, ${approvedTeams[awayIdx].id}, ${matchDate.toISOString().split('T')[0]}, ${time}, 'Cancha 1')
-        RETURNING *;
-      `;
-      generatedMatches.push(newMatch[0]);
+    // Group teams by category
+    const categories = {};
+    for (const t of approvedTeams) {
+        if (!categories[t.category]) categories[t.category] = [];
+        categories[t.category].push(t);
     }
+    
+    for (const [category, teams] of Object.entries(categories)) {
+        if (teams.length < 2) continue; // Skip categories with less than 2 teams
+        
+        // Empareja aleatoriamente los equipos en esta categoría
+        const shuffled = teams.sort(() => 0.5 - Math.random());
+        // Simple round-robin, cada 2 hacen un partido, si sobra 1 se queda libre
+        for (let i = 0; i < shuffled.length - 1; i += 2) {
+            const home = shuffled[i];
+            const away = shuffled[i+1];
+            
+            const matchDate = new Date(startDate);
+            matchDate.setDate(startDate.getDate() + 7); // La proxima semana
+            const time = '20:00:00';
+            
+            const newMatch = await sql`
+              INSERT INTO matches (home_team_id, away_team_id, match_date, match_time, field)
+              VALUES (${home.id}, ${away.id}, ${matchDate.toISOString().split('T')[0]}, ${time}, 'Cancha 1')
+              RETURNING *;
+            `;
+            generatedMatches.push(newMatch[0]);
+        }
+    }
+
     res.json(generatedMatches);
   } catch (error) {
     console.error(error);
@@ -402,6 +424,7 @@ app.get('/api/standings', async (req, res) => {
       SELECT t.id as team_id,
              t.name as team_name, 
              t.status as status,
+             t.logo_url as logo_url,
              COALESCE(SUM(pts), 0) as points, 
              COALESCE(SUM(pj), 0) as played, 
              COALESCE(SUM(pg), 0) as won, 
@@ -413,7 +436,7 @@ app.get('/api/standings', async (req, res) => {
       FROM teams t
       LEFT JOIN MatchStats ms ON t.id = ms.team_id
       WHERE t.status IN ('approved', 'disqualified')
-      GROUP BY t.id, t.name, t.status
+      GROUP BY t.id, t.name, t.status, t.logo_url
       ORDER BY points DESC, goal_diff DESC;
     `;
     res.json(standings);
