@@ -56,7 +56,37 @@ export default function AdminMatches() {
     }
   };
 
+  const generateFinal = async () => {
+    if (!confirm('¿Estás seguro de generar la Gran Final con los ganadores de los últimos 2 partidos?')) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/matches/generate-final`, { method: 'POST' });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error);
+      }
+      await fetchMatches();
+      alert('¡Gran Final generada con éxito!');
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveResult = async () => {
+    const homePlayerGoals = homePlayers.reduce((acc, p) => acc + (matchStats[p.id]?.goals || 0), 0);
+    const awayPlayerGoals = awayPlayers.reduce((acc, p) => acc + (matchStats[p.id]?.goals || 0), 0);
+
+    if (homePlayerGoals !== scores.home) {
+      alert(`Error en Acta Local: Los goles anotados por los jugadores suman ${homePlayerGoals}, pero el marcador indica ${scores.home}. Deben coincidir exactamente.`);
+      return;
+    }
+    if (awayPlayerGoals !== scores.away) {
+      alert(`Error en Acta Visitante: Los goles anotados por los jugadores suman ${awayPlayerGoals}, pero el marcador indica ${scores.away}. Deben coincidir exactamente.`);
+      return;
+    }
+
     try {
       const res = await fetch(`${API_URL}/api/matches/${selectedMatch.id}/result`, {
         method: 'PUT',
@@ -141,6 +171,13 @@ export default function AdminMatches() {
           >
             <span className="material-symbols-outlined text-sm">add</span>
             Generar Fixture
+          </button>
+          <button 
+            onClick={generateFinal}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-400 text-black font-bold uppercase tracking-widest text-xs hover:bg-orange-300 transition-colors shadow-[0_0_15px_rgba(251,146,60,0.2)]"
+          >
+            <span className="material-symbols-outlined text-sm">emoji_events</span>
+            Generar Final
           </button>
         </div>
       </div>

@@ -304,6 +304,45 @@ app.post('/api/matches/generate', async (req, res) => {
   }
 });
 
+// 6.1 Generar Gran Final automáticamente
+app.post('/api/matches/generate-final', async (req, res) => {
+  try {
+    const lastMatches = await sql`SELECT * FROM matches WHERE status = 'finished' ORDER BY match_date DESC, match_time DESC LIMIT 2`;
+    if (lastMatches.length < 2) {
+      return res.status(400).json({ error: 'Se necesitan al menos 2 partidos finalizados para generar una final.' });
+    }
+    
+    // Determine winners. In case of draw, defaults to away team or could be error. We assume no draws in semis strictly.
+    const winner1 = lastMatches[0].home_goals > lastMatches[0].away_goals ? lastMatches[0].home_team_id : lastMatches[0].away_team_id;
+    const winner2 = lastMatches[1].home_goals > lastMatches[1].away_goals ? lastMatches[1].home_team_id : lastMatches[1].away_team_id;
+
+    if (winner1 === winner2) {
+      return res.status(400).json({ error: 'Los equipos ganadores son el mismo. Revisa las actas previas.' });
+    }
+
+    const matchDate = new Date();
+    matchDate.setDate(matchDate.getDate() + 7);
+    const time = '20:00:00';
+    
+    const newMatch = await sql`
+      INSERT INTO matches (home_team_id, away_team_id, match_date, match_time, field, status)
+      VALUES (${winner1}, ${winner2}, ${matchDate.toISOString().split('T')[0]}, ${time}, 'Cancha Principal (GRAN FINAL)', 'scheduled')
+      RETURNING *;
+    `;
+    
+    // Crear notificación para todos
+    await sql`
+      INSERT INTO notifications (type, message)
+      VALUES ('final_match', '¡La Gran Final ha sido programada!');
+    `;
+
+    res.json(newMatch[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al generar la final' });
+  }
+});
+
 
 // 7. Cargar Resultado / Acta de partido
 app.put('/api/matches/:id/result', async (req, res) => {
@@ -360,20 +399,22 @@ app.get('/api/standings', async (req, res) => {
                CASE WHEN away_goals < home_goals THEN 1 ELSE 0 END as pp
         FROM matches WHERE status = 'finished'
       )
-      SELECT t.name, 
-             COALESCE(SUM(pts), 0) as pts, 
-             COALESCE(SUM(pj), 0) as pj, 
-             COALESCE(SUM(pg), 0) as pg, 
-             COALESCE(SUM(pe), 0) as pe, 
-             COALESCE(SUM(pp), 0) as pp, 
-             COALESCE(SUM(gf), 0) as gf, 
-             COALESCE(SUM(gc), 0) as gc, 
-             COALESCE(SUM(gf) - SUM(gc), 0) as dif
+      SELECT t.id as team_id,
+             t.name as team_name, 
+             t.status as status,
+             COALESCE(SUM(pts), 0) as points, 
+             COALESCE(SUM(pj), 0) as played, 
+             COALESCE(SUM(pg), 0) as won, 
+             COALESCE(SUM(pe), 0) as drawn, 
+             COALESCE(SUM(pp), 0) as lost, 
+             COALESCE(SUM(gf), 0) as goals_for, 
+             COALESCE(SUM(gc), 0) as goals_against, 
+             COALESCE(SUM(gf) - SUM(gc), 0) as goal_diff
       FROM teams t
       LEFT JOIN MatchStats ms ON t.id = ms.team_id
-      WHERE t.status = 'approved'
-      GROUP BY t.id, t.name
-      ORDER BY pts DESC, dif DESC;
+      WHERE t.status IN ('approved', 'disqualified')
+      GROUP BY t.id, t.name, t.status
+      ORDER BY points DESC, goal_diff DESC;
     `;
     res.json(standings);
   } catch (error) {

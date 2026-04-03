@@ -145,7 +145,12 @@ export default function PublicDashboard() {
                           <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center p-1">
                             <span className={`material-symbols-outlined text-sm ${index === 0 ? 'text-primary' : 'text-on-surface-variant'}`}>shield</span>
                           </div>
-                          <span className="font-bold text-white tracking-tight">{team.team_name}</span>
+                          <div className="flex flex-col">
+                            <span className={`font-bold tracking-tight ${team.status === 'disqualified' ? 'text-on-surface-variant line-through opacity-70' : 'text-white'}`}>{team.team_name}</span>
+                            {team.status === 'disqualified' && (
+                              <span className="text-[9px] uppercase font-bold text-red-500 tracking-widest mt-0.5">Descalificado</span>
+                            )}
+                          </div>
                         </td>
                         <td className="p-4 text-center text-on-surface-variant">{team.played}</td>
                         <td className="p-4 text-center text-on-surface-variant">{team.won}</td>

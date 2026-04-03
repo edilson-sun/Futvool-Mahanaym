@@ -56,7 +56,8 @@ export default function AdminTeams() {
   const statusMap = {
     pending: { label: 'Pendiente', color: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' },
     approved: { label: 'Aprobado', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-    rejected: { label: 'Rechazado', color: 'bg-red-500/20 text-red-400 border-red-500/30' }
+    rejected: { label: 'Rechazado', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
+    disqualified: { label: 'Descalificado', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' }
   };
 
   return (
@@ -136,12 +137,21 @@ export default function AdminTeams() {
                         </div>
                       )}
                       {team.status === 'approved' && (
-                        <button 
-                          onClick={() => changeStatus(team.id, 'rejected')}
-                          className="text-xs px-2 py-1 text-on-surface-variant hover:text-red-400 transition-colors bg-surface-container rounded"
-                        >
-                          Revocar
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => changeStatus(team.id, 'rejected')}
+                            className="text-xs px-2 py-1 text-on-surface-variant hover:text-red-400 transition-colors bg-surface-container rounded"
+                          >
+                            Revocar
+                          </button>
+                          <button 
+                            onClick={() => changeStatus(team.id, 'disqualified')}
+                            className="text-xs px-2 py-1 text-on-surface-variant hover:text-gray-400 transition-colors bg-surface-container border border-outline-variant/10 rounded"
+                            title="Descalificar del torneo"
+                          >
+                            Descalificar
+                          </button>
+                        </div>
                       )}
                       {team.status === 'rejected' && (
                         <button 
@@ -149,6 +159,14 @@ export default function AdminTeams() {
                           className="text-xs px-2 py-1 text-on-surface-variant hover:text-emerald-400 transition-colors bg-surface-container rounded"
                         >
                           Aprobar
+                        </button>
+                      )}
+                      {team.status === 'disqualified' && (
+                        <button 
+                          onClick={() => changeStatus(team.id, 'approved')}
+                          className="text-xs px-2 py-1 text-on-surface-variant hover:text-emerald-400 transition-colors bg-surface-container rounded"
+                        >
+                          Quitar Descalificación
                         </button>
                       )}
                       
