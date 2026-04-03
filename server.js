@@ -44,9 +44,16 @@ async function initDB() {
         position VARCHAR(50),
         goals INTEGER DEFAULT 0,
         yellow_cards INTEGER DEFAULT 0,
-        red_cards INTEGER DEFAULT 0
+        red_cards INTEGER DEFAULT 0,
+        matches_played INTEGER DEFAULT 0
     );
   `;
+
+  try {
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS matches_played INTEGER DEFAULT 0;`;
+  } catch(e) {
+    console.log("matches_played ya existe o error alterando:", e);
+  }
 
   await sql`
     CREATE TABLE IF NOT EXISTS matches (
@@ -69,6 +76,19 @@ async function initDB() {
         type VARCHAR(50) NOT NULL,
         message TEXT NOT NULL,
         is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMPTZ DEFAULT now()
+    );
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS match_change_requests (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        match_id UUID REFERENCES matches(id) ON DELETE CASCADE,
+        team_id UUID REFERENCES teams(id) ON DELETE CASCADE,
+        requested_date DATE,
+        requested_time TIME,
+        reason TEXT NOT NULL,
+        status VARCHAR(50) DEFAULT 'pending' NOT NULL, -- pending, approved, rejected
         created_at TIMESTAMPTZ DEFAULT now()
     );
   `;
@@ -210,18 +230,33 @@ app.get('/api/teams/my-team', async (req, res) => {
   }
 });
 
-// 5. Partidos - Listar
+// 5. Partidos - Listar (con filtro por equipo)
 app.get('/api/matches', async (req, res) => {
+  const { team_id } = req.query;
   try {
-    const matches = await sql`
-      SELECT m.*, 
-             t1.name as home_team_name, 
-             t2.name as away_team_name 
-      FROM matches m
-      JOIN teams t1 ON m.home_team_id = t1.id
-      JOIN teams t2 ON m.away_team_id = t2.id
-      ORDER BY m.match_date ASC, m.match_time ASC;
-    `;
+    let matches;
+    if (team_id) {
+      matches = await sql`
+        SELECT m.*, 
+               t1.name as home_team_name, 
+               t2.name as away_team_name 
+        FROM matches m
+        JOIN teams t1 ON m.home_team_id = t1.id
+        JOIN teams t2 ON m.away_team_id = t2.id
+        WHERE m.home_team_id = ${team_id} OR m.away_team_id = ${team_id}
+        ORDER BY m.match_date ASC, m.match_time ASC;
+      `;
+    } else {
+      matches = await sql`
+        SELECT m.*, 
+               t1.name as home_team_name, 
+               t2.name as away_team_name 
+        FROM matches m
+        JOIN teams t1 ON m.home_team_id = t1.id
+        JOIN teams t2 ON m.away_team_id = t2.id
+        ORDER BY m.match_date ASC, m.match_time ASC;
+      `;
+    }
     res.json(matches);
   } catch (error) {
     res.status(500).json({ error: 'Error al cargar partidos' });
@@ -273,7 +308,7 @@ app.post('/api/matches/generate', async (req, res) => {
 // 7. Cargar Resultado / Acta de partido
 app.put('/api/matches/:id/result', async (req, res) => {
     const { id } = req.params;
-    const { home_goals, away_goals } = req.body;
+    const { home_goals, away_goals, players_stats } = req.body;
     try {
         const updatedMatch = await sql`
             UPDATE matches 
@@ -281,8 +316,25 @@ app.put('/api/matches/:id/result', async (req, res) => {
             WHERE id = ${id}
             RETURNING *;
         `;
+        
+        // Actualizar estadísticas de jugadores si se proporcionan
+        if (players_stats && Array.isArray(players_stats) && players_stats.length > 0) {
+            for (const pStat of players_stats) {
+                // pStat: { player_id, played: boolean, goals: number, yellow_cards: number, red_cards: number }
+                await sql`
+                    UPDATE players 
+                    SET 
+                        goals = goals + ${pStat.goals || 0},
+                        yellow_cards = yellow_cards + ${pStat.yellow_cards || 0},
+                        red_cards = red_cards + ${pStat.red_cards || 0},
+                        matches_played = matches_played + ${pStat.played ? 1 : 0}
+                    WHERE id = ${pStat.player_id}
+                `;
+            }
+        }
         res.json(updatedMatch[0]);
     } catch (error) {
+        console.error('Error saving result stats', error);
         res.status(500).json({ error: 'Error al cargar resultado' });
     }
 });
@@ -309,14 +361,14 @@ app.get('/api/standings', async (req, res) => {
         FROM matches WHERE status = 'finished'
       )
       SELECT t.name, 
-             SUM(pts) as pts, 
-             SUM(pj) as pj, 
-             SUM(pg) as pg, 
-             SUM(pe) as pe, 
-             SUM(pp) as pp, 
-             SUM(gf) as gf, 
-             SUM(gc) as gc, 
-             (SUM(gf) - SUM(gc)) as dif
+             COALESCE(SUM(pts), 0) as pts, 
+             COALESCE(SUM(pj), 0) as pj, 
+             COALESCE(SUM(pg), 0) as pg, 
+             COALESCE(SUM(pe), 0) as pe, 
+             COALESCE(SUM(pp), 0) as pp, 
+             COALESCE(SUM(gf), 0) as gf, 
+             COALESCE(SUM(gc), 0) as gc, 
+             COALESCE(SUM(gf) - SUM(gc), 0) as dif
       FROM teams t
       LEFT JOIN MatchStats ms ON t.id = ms.team_id
       WHERE t.status = 'approved'
@@ -325,7 +377,101 @@ app.get('/api/standings', async (req, res) => {
     `;
     res.json(standings);
   } catch (error) {
+    console.error('Error calculando tabla', error);
     res.status(500).json({ error: 'Error al calcular tabla' });
+  }
+});
+
+// 8.1 Editar detalles del partido (Admin)
+app.put('/api/matches/:id', async (req, res) => {
+  const { id } = req.params;
+  const { match_date, match_time, field } = req.body;
+  try {
+    const updatedMatch = await sql`
+      UPDATE matches 
+      SET match_date = ${match_date}, match_time = ${match_time}, field = ${field}
+      WHERE id = ${id}
+      RETURNING *;
+    `;
+    res.json(updatedMatch[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar el partido' });
+  }
+});
+
+// 8.2 Solicitar Cambio de Horario (Usuario)
+app.post('/api/matches/:id/request-change', async (req, res) => {
+  const { id } = req.params;
+  const { team_id, requested_date, requested_time, reason, current_date, current_time } = req.body;
+  try {
+    const newRequest = await sql`
+      INSERT INTO match_change_requests (match_id, team_id, requested_date, requested_time, reason)
+      VALUES (${id}, ${team_id}, ${requested_date || null}, ${requested_time || null}, ${reason})
+      RETURNING *;
+    `;
+    
+    // Notificación al admin
+    await sql`
+      INSERT INTO notifications (type, message)
+      VALUES ('match_change_request', ${`Nueva solicitud de cambio de horario para un partido.`});
+    `;
+
+    res.status(201).json(newRequest[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al solicitar el cambio' });
+  }
+});
+
+// 8.3 Obtener solicitudes de cambio (Admin)
+app.get('/api/matches/change-requests/all', async (req, res) => {
+  try {
+    const requests = await sql`
+      SELECT r.*,
+             m.match_date as original_date,
+             m.match_time as original_time,
+             m.field as field,
+             t1.name as home_team_name,
+             t2.name as away_team_name,
+             reqTeam.name as requesting_team_name
+      FROM match_change_requests r
+      JOIN matches m ON r.match_id = m.id
+      JOIN teams reqTeam ON r.team_id = reqTeam.id
+      JOIN teams t1 ON m.home_team_id = t1.id
+      JOIN teams t2 ON m.away_team_id = t2.id
+      ORDER BY r.created_at DESC;
+    `;
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ error: 'Error obteniendo solicitudes' });
+  }
+});
+
+// 8.4 Responder a solicitud de cambio (Admin)
+app.put('/api/matches/change-requests/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status, match_id, new_date, new_time, new_field } = req.body; // status: 'approved' | 'rejected'
+  
+  try {
+    const reqUpdate = await sql`
+      UPDATE match_change_requests 
+      SET status = ${status} 
+      WHERE id = ${id} 
+      RETURNING *;
+    `;
+
+    if (status === 'approved' && match_id) {
+      // Actualizar el partido original
+      await sql`
+        UPDATE matches
+        SET match_date = ${new_date}, match_time = ${new_time}, field = ${new_field}
+        WHERE id = ${match_id}
+      `;
+    }
+
+    res.json(reqUpdate[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Error respondiendo solicitud' });
   }
 });
 

@@ -5,10 +5,16 @@ export default function MyTeam() {
   const { currentUser } = useAuth();
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('jugadores');
   const [newPlayer, setNewPlayer] = useState({ name: '', number: '', position: 'Portero' });
   const [error, setError] = useState('');
+
+  // Modals for requests
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [requestData, setRequestData] = useState({ requested_date: '', requested_time: '', reason: '' });
 
   const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -26,6 +32,11 @@ export default function MyTeam() {
       const playersRes = await fetch(`${API_URL}/api/players?team_id=${teamData.id}`);
       const playersData = await playersRes.json();
       setPlayers(playersData);
+
+      // Fetch matches
+      const matchesRes = await fetch(`${API_URL}/api/matches?team_id=${teamData.id}`);
+      const matchesData = await matchesRes.json();
+      setMatches(matchesData);
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -68,6 +79,33 @@ export default function MyTeam() {
       if (res.ok) fetchTeamData();
     } catch (err) {
       console.error('Error deleting player:', err);
+    }
+  };
+
+  const handleSendRequest = async (e) => {
+    e.preventDefault();
+    if (!requestData.reason) return;
+    try {
+      const res = await fetch(`${API_URL}/api/matches/${selectedMatch.id}/request-change`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          team_id: team.id,
+          requested_date: requestData.requested_date || null,
+          requested_time: requestData.requested_time || null,
+          reason: requestData.reason
+        })
+      });
+      if (res.ok) {
+        setShowRequestModal(false);
+        setRequestData({ requested_date: '', requested_time: '', reason: '' });
+        alert('Solicitud enviada correctamente. El administrador la revisará.');
+      } else {
+        alert('Error al enviar la solicitud');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error en el servidor');
     }
   };
 
@@ -123,15 +161,21 @@ export default function MyTeam() {
       <div className="flex gap-2 mb-8 bg-surface-container-low p-1 rounded-2xl border border-outline-variant/5 w-fit">
         <button 
           onClick={() => setActiveTab('jugadores')}
-          className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'jugadores' ? 'bg-primary text-black shadow-lg' : 'text-on-surface-variant hover:text-white'}`}
+          className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all w-24 sm:w-auto text-center ${activeTab === 'jugadores' ? 'bg-primary text-black shadow-lg text-[10px] sm:text-xs' : 'text-on-surface-variant hover:text-white text-[10px] sm:text-xs'}`}
         >
           Jugadores
         </button>
         <button 
-          onClick={() => setActiveTab('info')}
-          className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'info' ? 'bg-primary text-black shadow-lg' : 'text-on-surface-variant hover:text-white'}`}
+          onClick={() => setActiveTab('partidos')}
+          className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all w-24 sm:w-auto text-center ${activeTab === 'partidos' ? 'bg-primary text-black shadow-lg text-[10px] sm:text-xs' : 'text-on-surface-variant hover:text-white text-[10px] sm:text-xs'}`}
         >
-          Configuración
+          Partidos
+        </button>
+        <button 
+          onClick={() => setActiveTab('info')}
+          className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all w-24 sm:w-auto text-center ${activeTab === 'info' ? 'bg-primary text-black shadow-lg text-[10px] sm:text-xs' : 'text-on-surface-variant hover:text-white text-[10px] sm:text-xs'}`}
+        >
+          Config
         </button>
       </div>
 
@@ -236,6 +280,67 @@ export default function MyTeam() {
         </div>
       )}
 
+      {activeTab === 'partidos' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between bg-surface-container p-4 rounded-2xl border border-outline-variant/10 text-sm mb-6">
+            <span className="font-bold text-white tracking-tight">Mis Partidos</span>
+            <span className="text-on-surface-variant">{matches.length} Asignados</span>
+          </div>
+
+          <div className="grid gap-4">
+            {matches.length === 0 ? (
+              <div className="py-20 text-center bg-surface-container-low rounded-3xl border border-dashed border-outline-variant/10">
+                <p className="text-on-surface-variant italic">Aún no hay partidos programados para tu equipo.</p>
+              </div>
+            ) : matches.map(match => (
+              <div key={match.id} className={`bg-surface-container-low border border-outline-variant/10 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between hover:border-outline-variant/30 transition-all gap-6 ${match.status === 'finished' ? 'opacity-70' : ''}`}>
+                <div className="flex items-center gap-6 w-full md:w-auto">
+                   <div className="text-center w-24">
+                     <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold mb-1">{match.field || 'Cancha TBD'}</p>
+                     <p className="font-bold text-white font-manrope">{match.match_time ? match.match_time.substring(0,5) : 'Por definir'}</p>
+                     <p className="text-[10px] text-primary font-bold">{match.match_date ? new Date(match.match_date).toLocaleDateString() : 'Pendiente'}</p>
+                   </div>
+                   <div className="h-10 w-px bg-outline-variant/20 hidden md:block"></div>
+                   <div className="flex items-center gap-4 flex-1">
+                     <div className="flex items-center gap-3 w-32 justify-end text-right">
+                       <span className={`font-bold text-sm ${match.home_team_id === team.id ? 'text-primary' : 'text-white'}`}>{match.home_team_name}</span>
+                     </div>
+                     
+                     {match.status === 'finished' ? (
+                       <div className="px-5 py-2 rounded-lg bg-surface-container-highest border border-outline-variant/10 text-xl font-black text-white font-manrope tracking-widest">
+                         {match.home_goals} - {match.away_goals}
+                       </div>
+                     ) : (
+                       <div className="px-4 py-1 rounded bg-surface-container border border-outline-variant/10 text-xs font-bold text-on-surface-variant">VS</div>
+                     )}
+
+                     <div className="flex items-center gap-3 w-32 justify-start font-bold">
+                       <span className={`font-bold text-sm ${match.away_team_id === team.id ? 'text-primary' : 'text-white'}`}>{match.away_team_name}</span>
+                     </div>
+                   </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  {match.status !== 'finished' ? (
+                    <button 
+                      onClick={() => {
+                        setSelectedMatch(match);
+                        setShowRequestModal(true);
+                      }}
+                      className="px-4 py-2 bg-orange-400/10 text-orange-400 font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-orange-400/20 transition-colors whitespace-nowrap"
+                    >
+                      Solicitar Cambio
+                    </button>
+                  ) : (
+                    <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest border border-emerald-400/20 px-2 py-1 rounded">Finalizado</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {activeTab === 'info' && (
         <div className="bg-surface-container-high rounded-3xl p-8 border border-outline-variant/10">
            <h3 className="text-xl font-bold text-white mb-6">Detalles del Equipo</h3>
@@ -272,6 +377,61 @@ export default function MyTeam() {
                  </ul>
               </div>
            </div>
+        </div>
+      )}
+
+      {/* Request Change Modal */}
+      {showRequestModal && selectedMatch && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface-container-highest rounded-3xl p-8 w-full max-w-md border border-outline-variant/20 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-black text-white mb-6 font-headline tracking-tight">Solicitar Cambio de Horario</h2>
+            <p className="text-sm text-on-surface-variant mb-6">Indica la fecha y hora sugerida, y el motivo por el cual no pueden presentarse a la fecha original.</p>
+            
+            <form onSubmit={handleSendRequest} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Fecha Sugerida</label>
+                  <input 
+                    type="date"
+                    value={requestData.requested_date}
+                    onChange={(e) => setRequestData({...requestData, requested_date: e.target.value})}
+                    className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Hora Sugerida</label>
+                  <input 
+                    type="time"
+                    value={requestData.requested_time}
+                    onChange={(e) => setRequestData({...requestData, requested_time: e.target.value})}
+                    className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Motivo / Justificación *</label>
+                <textarea 
+                  required
+                  rows="3"
+                  value={requestData.reason}
+                  onChange={(e) => setRequestData({...requestData, reason: e.target.value})}
+                  className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary resize-none"
+                  placeholder="Explique por qué no pueden asistir..."
+                ></textarea>
+              </div>
+
+              <div className="flex gap-4 mt-8">
+                <button type="button" onClick={() => setShowRequestModal(false)} className="flex-1 py-3 font-bold text-on-surface-variant hover:text-white transition-colors">Cancelar</button>
+                <button 
+                  type="submit"
+                  className="flex-1 py-3 bg-primary text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-emerald-400 transition-all"
+                >
+                  Enviar Solicitud
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
