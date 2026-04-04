@@ -13,6 +13,18 @@ export default function AdminMatches() {
   const [awayPlayers, setAwayPlayers] = useState([]);
   const [matchStats, setMatchStats] = useState({});
   const [editData, setEditData] = useState({ match_date: '', match_time: '', field: '' });
+  
+  // New States for Manual Add
+  const [teams, setTeams] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addData, setAddData] = useState({
+    category: '',
+    home_team_id: '',
+    away_team_id: '',
+    match_date: '',
+    match_time: '',
+    field: 'Cancha 1'
+  });
 
   const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -35,6 +47,17 @@ export default function AdminMatches() {
       setRequests(data);
     } catch (error) {
       console.error('Error fetching requests:', error);
+    }
+  };
+
+  const fetchTeams = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/teams`);
+      const data = await res.json();
+      // Solo equipos aprobados
+      setTeams(data.filter(t => t.status === 'approved'));
+    } catch (error) {
+      console.error('Error fetching teams:', error);
     }
   };
 
@@ -148,9 +171,46 @@ export default function AdminMatches() {
     }
   };
 
+  const handleSaveAdd = async () => {
+    if (!addData.home_team_id || !addData.away_team_id || !addData.match_date || !addData.match_time) {
+        alert('Por favor completa todos los campos obligatorios.');
+        return;
+    }
+    if (addData.home_team_id === addData.away_team_id) {
+        alert('Un equipo no puede jugar contra sí mismo.');
+        return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/matches`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(addData)
+      });
+      if (res.ok) {
+        setShowAddModal(false);
+        fetchMatches();
+        setAddData({
+            category: '',
+            home_team_id: '',
+            away_team_id: '',
+            match_date: '',
+            match_time: '',
+            field: 'Cancha 1'
+        });
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Error al crear el partido');
+      }
+    } catch (error) {
+      console.error('Error saving match:', error);
+    }
+  };
+
   useEffect(() => {
     fetchMatches();
     fetchRequests();
+    fetchTeams();
   }, []);
 
   return (
@@ -164,6 +224,13 @@ export default function AdminMatches() {
           <button onClick={fetchMatches} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-surface-container border border-outline-variant/20 hover:bg-surface-container-high transition-colors text-sm font-bold text-white">
             <span className="material-symbols-outlined text-sm">refresh</span>
             Actualizar
+          </button>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-surface-container-highest border border-primary/30 hover:border-primary/60 transition-all text-sm font-bold text-white shadow-[0_0_15px_rgba(107,254,156,0.05)]"
+          >
+            <span className="material-symbols-outlined text-sm text-primary">add_circle</span>
+            Crear Partido
           </button>
           <button 
             onClick={generateFixture}
@@ -570,6 +637,119 @@ export default function AdminMatches() {
                 className="flex-1 py-3 bg-primary text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-emerald-400 transition-all"
               >
                 Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Add Match Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface-container-highest rounded-3xl p-8 w-full max-w-lg border border-outline-variant/20 shadow-2xl animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
+            <h2 className="text-2xl font-black text-white mb-2 font-headline tracking-tight text-center">Crear Partido Manual</h2>
+            <p className="text-sm text-center text-on-surface-variant font-bold uppercase tracking-widest mb-6">
+              Programa un nuevo encuentro
+            </p>
+            
+            <div className="space-y-4 mb-8">
+               {/* Categoría Selector */}
+               <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-primary mb-2 block ml-1">Categoría</label>
+                  <select 
+                    value={addData.category}
+                    onChange={(e) => setAddData({...addData, category: e.target.value, home_team_id: '', away_team_id: ''})}
+                    className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
+                  >
+                    <option value="">Seleccionar Categoría</option>
+                    <option value="Sub-8">Sub-8</option>
+                    <option value="Sub-10">Sub-10</option>
+                    <option value="Sub-12">Sub-12</option>
+                    <option value="Sub-14">Sub-14</option>
+                    <option value="Sub-16">Sub-16</option>
+                    <option value="Sub-18">Sub-18</option>
+                  </select>
+               </div>
+
+               {/* Home Team */}
+               <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Equipo Local</label>
+                  <select 
+                    value={addData.home_team_id}
+                    onChange={(e) => setAddData({...addData, home_team_id: e.target.value})}
+                    disabled={!addData.category}
+                    className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary disabled:opacity-50"
+                  >
+                    <option value="">Seleccionar Equipo</option>
+                    {teams.filter(t => t.category === addData.category).map(t => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+               </div>
+
+               {/* Away Team */}
+               <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Equipo Visitante</label>
+                  <select 
+                    value={addData.away_team_id}
+                    onChange={(e) => setAddData({...addData, away_team_id: e.target.value})}
+                    disabled={!addData.category || !addData.home_team_id}
+                    className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary disabled:opacity-50"
+                  >
+                    <option value="">Seleccionar Equipo</option>
+                    {teams.filter(t => t.category === addData.category && t.id !== addData.home_team_id).map(t => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Fecha</label>
+                    <input 
+                      type="date"
+                      value={addData.match_date}
+                      onChange={(e) => setAddData({...addData, match_date: e.target.value})}
+                      className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
+                    />
+                 </div>
+                 <div>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Hora</label>
+                    <input 
+                      type="time"
+                      value={addData.match_time}
+                      onChange={(e) => setAddData({...addData, match_time: e.target.value})}
+                      className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
+                    />
+                 </div>
+               </div>
+
+               <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2 block ml-1">Cancha / Sede</label>
+                  <input 
+                    type="text"
+                    value={addData.field}
+                    onChange={(e) => setAddData({...addData, field: e.target.value})}
+                    placeholder="Ej. Cancha Principal"
+                    className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
+                  />
+               </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                    setShowAddModal(false);
+                    setAddData({ category: '', home_team_id: '', away_team_id: '', match_date: '', match_time: '', field: 'Cancha 1' });
+                }} 
+                className="flex-1 py-3 font-bold text-on-surface-variant hover:text-white transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleSaveAdd}
+                className="flex-2 py-3 px-6 bg-primary text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-emerald-400 transition-all shadow-[0_0_15px_rgba(107,254,156,0.2)]"
+              >
+                Crear Encuentro
               </button>
             </div>
           </div>

@@ -284,6 +284,22 @@ app.get('/api/matches', async (req, res) => {
   }
 });
 
+// 5.1 Registrar un nuevo partido manualmente
+app.post('/api/matches', async (req, res) => {
+  const { home_team_id, away_team_id, match_date, match_time, field } = req.body;
+  try {
+    const newMatch = await sql`
+      INSERT INTO matches (home_team_id, away_team_id, match_date, match_time, field)
+      VALUES (${home_team_id}, ${away_team_id}, ${match_date}, ${match_time}, ${field || 'Cancha 1'})
+      RETURNING *;
+    `;
+    res.status(201).json(newMatch[0]);
+  } catch (error) {
+    console.error('Error manual match registration:', error);
+    res.status(500).json({ error: 'Error al registrar el partido manualmente' });
+  }
+});
+
 // 6. Generar Fixture aleatorio (Especial de 2 equipos según requerimiento)
 app.post('/api/matches/generate', async (req, res) => {
   try {
@@ -597,13 +613,19 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, async () => {
-  try {
-    await initDB();
-    console.log(`🚀 Servidor backend corriendo y escuchando en el puerto ${PORT}`);
-  } catch (error) {
-    console.error('❌ Error al inicializar la base de datos:', error);
-  }
-});
+// Para Firebase Functions no llamamos a app.listen
+// Solo para local
+if (process.env.NODE_ENV !== 'production' || !process.env.FUNCTION_NAME) {
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, async () => {
+      try {
+        await initDB();
+        console.log(`🚀 Servidor backend corriendo y escuchando en el puerto ${PORT}`);
+      } catch (error) {
+        console.error('❌ Error al inicializar la base de datos:', error);
+      }
+    });
+}
+
+export default app;
 
