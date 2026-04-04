@@ -72,6 +72,19 @@ export default function TeamRegistration() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) return;
+
+    // Strict validation for required fields
+    if (!formData.name.trim() || !formData.category || !formData.captain_name.trim() || !formData.captain_phone.trim()) {
+      setError('Por favor, completa todos los campos del formulario.');
+      return;
+    }
+
+    if (!formData.logo_url) {
+      setError('La foto o logo del equipo es obligatorio. Por favor, selecciona una imagen.');
+      // Scroll up to the logo section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     
     setLoading(true);
     setError(null);
@@ -160,7 +173,7 @@ export default function TeamRegistration() {
         <div className="space-y-8 z-10 relative">
           {/* Logo Upload Section */}
           <div className="flex flex-col items-center justify-center mb-8">
-            <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 text-center">Foto / Logo del Equipo/Escuela</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 text-center">Foto / Logo del Equipo/Escuela *</label>
             <div className="relative group cursor-pointer w-32 h-32 rounded-full overflow-hidden border-2 border-dashed border-outline-variant/30 hover:border-primary transition-colors bg-surface-container">
               {previewImage ? (
                 <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />

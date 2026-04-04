@@ -85,7 +85,7 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500>
+    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-8">
