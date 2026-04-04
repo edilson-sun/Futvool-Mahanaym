@@ -144,9 +144,9 @@ export default function MyTeam() {
 
   return (
     <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
-      {/* Selector de equipos (si hay más de 1) */}
-      {teams.length > 1 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+      {/* Selector de equipos */}
+      {teams.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6 items-center">
           {teams.map((t, index) => (
             <button
               key={t.id}
@@ -160,6 +160,13 @@ export default function MyTeam() {
               {t.name} <span className="opacity-60 ml-1">({t.category})</span>
             </button>
           ))}
+          <a
+            href="/registro"
+            className="flex items-center gap-1 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest bg-surface-container border border-dashed border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all ml-auto"
+          >
+            <span className="material-symbols-outlined text-sm">add</span>
+            Registrar Otro Equipo
+          </a>
         </div>
       )}
 
