@@ -26,6 +26,9 @@ export default function AdminMatches() {
     field: 'Cancha 1'
   });
 
+  const [filterCategory, setFilterCategory] = useState('Todas');
+  const CATEGORIES = ['Todas', 'sub-8', 'sub-10', 'sub-12', 'sub-13', 'sub-14', 'sub-15', 'sub-16', 'sub-17', 'sub-18'];
+
   const API_URL = import.meta.env.VITE_API_URL || '';
 
   const fetchMatches = async () => {
@@ -62,23 +65,38 @@ export default function AdminMatches() {
   };
 
   const generateFixture = async () => {
-    if (!confirm('¿Estás seguro de generar un nuevo fixture de 20 partidos? Esto agregará partidos aleatorios entre equipos aprobados.')) return;
+    const selectedCat = prompt('¿Para qué categoría deseas generar el fixture?\n(Escribe: sub-8, sub-10, sub-12, sub-13, sub-14, sub-15, sub-16, sub-17, sub-18 o Todas)', filterCategory);
+    
+    if (!selectedCat) return;
+    
+    const validCat = CATEGORIES.find(c => c.toLowerCase() === selectedCat.toLowerCase());
+    if (!validCat) {
+      alert('Categoría no válida. Por favor usa una de las sugeridas.');
+      return;
+    }
+
+    if (!confirm(`¿Estás seguro de generar un nuevo fixture para la categoría "${validCat}"? Esto podría reemplazar los partidos programados existentes para esta categoría.`)) return;
+    
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/api/matches/generate`, { method: 'POST' });
+      const res = await fetch(`${API_URL}/api/matches/generate`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: validCat })
+      });
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error);
       }
       await fetchMatches();
-      alert('Fixture generado con éxito');
+      alert(`Fixture para ${validCat} generado con éxito`);
     } catch (error) {
       alert(error.message);
     } finally {
       setLoading(false);
     }
   };
-
+极
   const generateFinal = async () => {
     if (!confirm('¿Estás seguro de generar la Gran Final con los ganadores de los últimos 2 partidos?')) return;
     try {
@@ -276,6 +294,25 @@ export default function AdminMatches() {
                  )}
                </button>
              </div>
+
+             <div className="mt-8">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 px-2">Categorías</h3>
+                <div className="flex flex-wrap gap-2 px-1">
+                  {CATEGORIES.map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => setFilterCategory(cat)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                        filterCategory === cat 
+                          ? 'bg-primary text-black border-primary' 
+                          : 'bg-surface-container border-outline-variant/20 text-on-surface-variant hover:border-primary/50'
+                      }`}
+                    >
+                      {cat === 'Todas' ? 'Todas' : cat.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+             </div>
           </div>
         </div>
 
@@ -285,8 +322,12 @@ export default function AdminMatches() {
           {activeTab === 'matches' && (
             <>
               <div className="flex items-center justify-between bg-surface-container p-4 rounded-2xl border border-outline-variant/10 text-sm mb-6">
-                <span className="font-bold text-white tracking-tight">Próximos Partidos</span>
-                <span className="text-on-surface-variant">{matches.length} Registrados</span>
+                <span className="font-bold text-white tracking-tight">
+                    Próximos Partidos {filterCategory !== 'Todas' && <span className="text-primary">— {filterCategory.toUpperCase()}</span>}
+                </span>
+                <span className="text-on-surface-variant">
+                    {matches.filter(m => filterCategory === 'Todas' || m.home_team_category?.toLowerCase() === filterCategory.toLowerCase()).length} Filtrados
+                </span>
               </div>
 
           <div className="grid gap-4">
@@ -294,11 +335,11 @@ export default function AdminMatches() {
               <div className="py-20 text-center">
                 <span className="material-symbols-outlined animate-spin text-primary text-4xl">sync</span>
               </div>
-            ) : matches.length === 0 ? (
+            ) : matches.filter(m => filterCategory === 'Todas' || m.home_team_category?.toLowerCase() === filterCategory.toLowerCase()).length === 0 ? (
               <div className="bg-surface-container-low p-10 rounded-2xl text-center border border-dashed border-outline-variant/20">
-                <p className="text-on-surface-variant">No hay partidos programados. Usa "Generar Fixture" para empezar.</p>
+                <p className="text-on-surface-variant">No hay partidos programados {filterCategory !== 'Todas' ? `en la categoría ${filterCategory.toUpperCase()}` : ''}. Usa "Generar Fixture" para empezar.</p>
               </div>
-            ) : matches.map(match => (
+            ) : matches.filter(m => filterCategory === 'Todas' || m.home_team_category?.toLowerCase() === filterCategory.toLowerCase()).map(match => (
               <div key={match.id} className={`bg-surface-container-low border border-outline-variant/10 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between hover:border-outline-variant/30 transition-all gap-6 ${match.status === 'finished' ? 'opacity-70' : ''}`}>
                 <div className="flex items-center gap-6 w-full md:w-auto">
                    <div className="text-center w-24">
@@ -661,12 +702,9 @@ export default function AdminMatches() {
                     className="w-full bg-surface-container border border-outline-variant/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-primary"
                   >
                     <option value="">Seleccionar Categoría</option>
-                    <option value="Sub-8">Sub-8</option>
-                    <option value="Sub-10">Sub-10</option>
-                    <option value="Sub-12">Sub-12</option>
-                    <option value="Sub-14">Sub-14</option>
-                    <option value="Sub-16">Sub-16</option>
-                    <option value="Sub-18">Sub-18</option>
+                    {CATEGORIES.filter(c => c !== 'Todas').map(cat => (
+                        <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+                    ))}
                   </select>
                </div>
 

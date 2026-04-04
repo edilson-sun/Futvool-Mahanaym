@@ -300,17 +300,34 @@ app.post('/api/matches', async (req, res) => {
   }
 });
 
-// 6. Generar Fixture aleatorio (Especial de 2 equipos según requerimiento)
+// 6. Generar Fixture aleatorio (Especial por categoría)
 app.post('/api/matches/generate', async (req, res) => {
+  const { category } = req.body;
   try {
-    const approvedTeams = await sql`SELECT id, name, category FROM teams WHERE status = 'approved' ORDER BY category`;
+    let approvedTeams;
+    if (category && category !== 'Todas') {
+      approvedTeams = await sql`SELECT id, name, category FROM teams WHERE status = 'approved' AND category = ${category} ORDER BY name`;
+    } else {
+      approvedTeams = await sql`SELECT id, name, category FROM teams WHERE status = 'approved' ORDER BY category`;
+    }
     
     if (approvedTeams.length < 2) {
-      return res.status(400).json({ error: 'Se necesitan al menos 2 equipos aprobados en total para iniciar un torneo.' });
+      return res.status(400).json({ error: `Se necesitan al menos 2 equipos aprobados en ${category || 'total'} para iniciar un torneo.` });
     }
 
-    // Opcional: Limpiar partidos anteriores para iniciar "nuevo torneo"
-    await sql`DELETE FROM matches`;
+    // Limpiar partidos anteriores
+    if (category && category !== 'Todas') {
+      // Borrar solo partidos donde AMBOS equipos sean de esa categoría
+      await sql`
+        DELETE FROM matches 
+        WHERE home_team_id IN (SELECT id FROM teams WHERE category = ${category})
+          AND away_team_id IN (SELECT id FROM teams WHERE category = ${category})
+          AND status = 'scheduled'
+      `;
+    } else {
+      // Si es "Todas", borrar todos los partidos programados
+      await sql`DELETE FROM matches WHERE status = 'scheduled'`;
+    }
 
     const generatedMatches = [];
     const startDate = new Date();
@@ -322,18 +339,16 @@ app.post('/api/matches/generate', async (req, res) => {
         categories[t.category].push(t);
     }
     
-    for (const [category, teams] of Object.entries(categories)) {
-        if (teams.length < 2) continue; // Skip categories with less than 2 teams
+    for (const [catName, teams] of Object.entries(categories)) {
+        if (teams.length < 2) continue;
         
-        // Empareja aleatoriamente los equipos en esta categoría
         const shuffled = teams.sort(() => 0.5 - Math.random());
-        // Simple round-robin, cada 2 hacen un partido, si sobra 1 se queda libre
         for (let i = 0; i < shuffled.length - 1; i += 2) {
             const home = shuffled[i];
             const away = shuffled[i+1];
             
             const matchDate = new Date(startDate);
-            matchDate.setDate(startDate.getDate() + 7); // La proxima semana
+            matchDate.setDate(startDate.getDate() + 7);
             const time = '20:00:00';
             
             const newMatch = await sql`
