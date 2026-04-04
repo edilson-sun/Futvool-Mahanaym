@@ -189,7 +189,7 @@ export default function AdminDashboard() {
                   {match.home_team_logo ? (
                     <img src={match.home_team_logo} alt={match.home_team_name} className="w-8 h-8 rounded-full border border-outline-variant/10 shadow-inner object-cover" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-black border border-outline-variant/10 shadow-inner uppercase">{match.home_team_name.slice(0,2)}</div>
+                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-black border border-outline-variant/10 shadow-inner uppercase">{(match.home_team_name || 'T1').slice(0,2)}</div>
                   )}
                   <span className="text-[10px] font-black text-white truncate max-w-[100px]">{match.home_team_name}</span>
                 </div>
@@ -197,15 +197,15 @@ export default function AdminDashboard() {
                    {match.status === 'finished' ? (
                      <span className="text-xl font-black text-white">{match.home_goals} - {match.away_goals}</span>
                    ) : (
-                     <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded uppercase tracking-tighter">{match.match_time.slice(0,5)}</span>
+                     <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded uppercase tracking-tighter">{match.match_time ? match.match_time.slice(0,5) : '--:--'}</span>
                    )}
-                   <span className="text-[8px] uppercase font-bold text-on-surface-variant/60">{match.status === 'finished' ? 'Finalizado' : match.match_date.split('T')[0]}</span>
+                   <span className="text-[8px] uppercase font-bold text-on-surface-variant/60">{match.status === 'finished' ? 'Finalizado' : (match.match_date ? match.match_date.split('T')[0] : 'TBD')}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 flex-1 text-center">
                   {match.away_team_logo ? (
                     <img src={match.away_team_logo} alt={match.away_team_name} className="w-8 h-8 rounded-full border border-outline-variant/10 shadow-inner object-cover" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-black border border-outline-variant/10 shadow-inner uppercase">{match.away_team_name.slice(0,2)}</div>
+                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-black border border-outline-variant/10 shadow-inner uppercase">{(match.away_team_name || 'T2').slice(0,2)}</div>
                   )}
                   <span className="text-[10px] font-black text-white truncate max-w-[100px]">{match.away_team_name}</span>
                 </div>

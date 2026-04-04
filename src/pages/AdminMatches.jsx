@@ -344,8 +344,8 @@ export default function AdminMatches() {
                 <div className="flex items-center gap-6 w-full md:w-auto">
                    <div className="text-center w-24">
                      <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold mb-1">{match.field || 'Cancha TBD'}</p>
-                     <p className="font-bold text-white font-manrope">{match.match_time.substring(0,5)}</p>
-                     <p className="text-[10px] text-primary font-bold">{new Date(match.match_date).toLocaleDateString()}</p>
+                     <p className="font-bold text-white font-manrope">{match.match_time ? match.match_time.substring(0,5) : '--:--'}</p>
+                     <p className="text-[10px] text-primary font-bold">{match.match_date ? new Date(match.match_date).toLocaleDateString() : 'TBD'}</p>
                    </div>
                    <div className="h-10 w-px bg-outline-variant/20 hidden md:block"></div>
                    <div className="flex items-center gap-4 flex-1">

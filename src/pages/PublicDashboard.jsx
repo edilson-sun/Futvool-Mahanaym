@@ -82,7 +82,7 @@ export default function PublicDashboard() {
                         <img src={match.home_team_logo} alt={match.home_team_name} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.home_team_name.slice(0,2).toUpperCase()}</div>
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{(match.home_team_name || 'T1').slice(0,2).toUpperCase()}</div>
                     )}
                     <div className="flex flex-col items-center w-full">
                       <span className="text-[10px] font-bold text-white truncate w-full text-center">{match.home_team_name}</span>
@@ -94,10 +94,10 @@ export default function PublicDashboard() {
                        <span className="text-xl font-black text-white">{match.home_goals} - {match.away_goals}</span>
                      ) : (
                        <div className="bg-primary/10 px-2 py-0.5 rounded">
-                         <span className="text-[10px] font-black text-primary uppercase">{match.match_time.slice(0,5)}</span>
+                         <span className="text-[10px] font-black text-primary uppercase">{match.match_time ? match.match_time.slice(0,5) : '--:--'}</span>
                        </div>
                      )}
-                     <span className="text-[8px] uppercase font-bold text-on-surface-variant mt-1">{match.status === 'finished' ? 'FINAL' : match.match_date.split('T')[0]}</span>
+                     <span className="text-[8px] uppercase font-bold text-on-surface-variant mt-1">{match.status === 'finished' ? 'FINAL' : (match.match_date ? match.match_date.split('T')[0] : 'TBD')}</span>
                   </div>
                   <div className="flex flex-col items-center gap-2 flex-1">
                     {match.away_team_logo ? (
@@ -105,7 +105,7 @@ export default function PublicDashboard() {
                         <img src={match.away_team_logo} alt={match.away_team_name} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.away_team_name.slice(0,2).toUpperCase()}</div>
+                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{(match.away_team_name || 'T2').slice(0,2).toUpperCase()}</div>
                     )}
                     <div className="flex flex-col items-center w-full">
                       <span className="text-[10px] font-bold text-white truncate w-full text-center">{match.away_team_name}</span>
