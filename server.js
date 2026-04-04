@@ -136,6 +136,12 @@ app.get('/api/teams', async (req, res) => {
 app.post('/api/teams', async (req, res) => {
   const { name, category, captain_name, captain_phone, user_email, logo_url } = req.body;
   try {
+    // Verify user hasn't registered a team in the same category
+    const existingTeam = await sql`SELECT id FROM teams WHERE user_email = ${user_email} AND category = ${category}`;
+    if (existingTeam.length > 0) {
+      return res.status(400).json({ error: 'Ya tienes un equipo registrado en la categoría ' + category });
+    }
+
     const newTeam = await sql`
       INSERT INTO teams (name, category, captain_name, captain_phone, user_email, logo_url)
       VALUES (${name}, ${category}, ${captain_name}, ${captain_phone}, ${user_email}, ${logo_url || null})
@@ -188,9 +194,9 @@ app.get('/api/players', async (req, res) => {
   try {
     let players;
     if (team_id) {
-      players = await sql`SELECT p.*, t.name as team_name FROM players p JOIN teams t ON p.team_id = t.id WHERE p.team_id = ${team_id}`;
+      players = await sql`SELECT p.*, t.name as team_name, t.category as team_category FROM players p JOIN teams t ON p.team_id = t.id WHERE p.team_id = ${team_id}`;
     } else {
-      players = await sql`SELECT p.*, t.name as team_name FROM players p JOIN teams t ON p.team_id = t.id ORDER BY p.goals DESC`;
+      players = await sql`SELECT p.*, t.name as team_name, t.category as team_category FROM players p JOIN teams t ON p.team_id = t.id ORDER BY p.goals DESC`;
     }
     res.json(players);
   } catch (error) {
@@ -229,11 +235,11 @@ app.delete('/api/players/:id', async (req, res) => {
 app.get('/api/teams/my-team', async (req, res) => {
   const { email } = req.query;
   try {
-    const team = await sql`SELECT * FROM teams WHERE user_email = ${email} ORDER BY created_at DESC LIMIT 1`;
-    if (team.length === 0) return res.status(404).json({ error: 'No se encontró equipo para este usuario' });
-    res.json(team[0]);
+    const teams = await sql`SELECT * FROM teams WHERE user_email = ${email} ORDER BY created_at DESC`;
+    if (teams.length === 0) return res.status(404).json({ error: 'No se encontraron equipos para este usuario' });
+    res.json(teams); // now returns an array of teams
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener equipo' });
+    res.status(500).json({ error: 'Error al obtener equipos' });
   }
 });
 
@@ -247,8 +253,10 @@ app.get('/api/matches', async (req, res) => {
         SELECT m.*, 
                t1.name as home_team_name, 
                t1.logo_url as home_team_logo,
+               t1.category as home_team_category,
                t2.name as away_team_name,
-               t2.logo_url as away_team_logo
+               t2.logo_url as away_team_logo,
+               t2.category as away_team_category
         FROM matches m
         JOIN teams t1 ON m.home_team_id = t1.id
         JOIN teams t2 ON m.away_team_id = t2.id
@@ -260,8 +268,10 @@ app.get('/api/matches', async (req, res) => {
         SELECT m.*, 
                t1.name as home_team_name, 
                t1.logo_url as home_team_logo,
+               t1.category as home_team_category,
                t2.name as away_team_name,
-               t2.logo_url as away_team_logo
+               t2.logo_url as away_team_logo,
+               t2.category as away_team_category
         FROM matches m
         JOIN teams t1 ON m.home_team_id = t1.id
         JOIN teams t2 ON m.away_team_id = t2.id
@@ -423,6 +433,7 @@ app.get('/api/standings', async (req, res) => {
       )
       SELECT t.id as team_id,
              t.name as team_name, 
+             t.category as category,
              t.status as status,
              t.logo_url as logo_url,
              COALESCE(SUM(pts), 0) as points, 
@@ -436,7 +447,7 @@ app.get('/api/standings', async (req, res) => {
       FROM teams t
       LEFT JOIN MatchStats ms ON t.id = ms.team_id
       WHERE t.status IN ('approved', 'disqualified')
-      GROUP BY t.id, t.name, t.status, t.logo_url
+      GROUP BY t.id, t.name, t.category, t.status, t.logo_url
       ORDER BY points DESC, goal_diff DESC;
     `;
     res.json(standings);

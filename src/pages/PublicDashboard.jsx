@@ -52,7 +52,7 @@ export default function PublicDashboard() {
              <p className="text-sm font-bold text-white">Fase de Grupos</p>
            </div>
            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-             <span className="material-symbols-outlined text-primary text-sm">paddlestat</span>
+             <span className="material-symbols-outlined text-primary text-xl">sports_score</span>
            </div>
         </div>
       </div>
@@ -81,7 +81,10 @@ export default function PublicDashboard() {
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.home_team_name.slice(0,2).toUpperCase()}</div>
                     )}
-                    <span className="text-[9px] uppercase font-black text-on-surface-variant truncate w-full text-center">{match.home_team_name}</span>
+                    <div className="flex flex-col items-center w-full">
+                      <span className="text-[10px] font-bold text-white truncate w-full text-center">{match.home_team_name}</span>
+                      <span className="text-[8px] uppercase font-black text-primary truncate w-full text-center">{match.home_team_category}</span>
+                    </div>
                   </div>
                   <div className="flex-1 flex flex-col items-center">
                      {match.status === 'finished' ? (
@@ -101,7 +104,10 @@ export default function PublicDashboard() {
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-black border border-outline-variant/10 shadow-inner">{match.away_team_name.slice(0,2).toUpperCase()}</div>
                     )}
-                    <span className="text-[9px] uppercase font-black text-on-surface-variant truncate w-full text-center">{match.away_team_name}</span>
+                    <div className="flex flex-col items-center w-full">
+                      <span className="text-[10px] font-bold text-white truncate w-full text-center">{match.away_team_name}</span>
+                      <span className="text-[8px] uppercase font-black text-primary truncate w-full text-center">{match.away_team_category}</span>
+                    </div>
                   </div>
                 </div>
              </div>
@@ -163,6 +169,7 @@ export default function PublicDashboard() {
                           </div>
                           <div className="flex flex-col">
                             <span className={`font-bold tracking-tight ${team.status === 'disqualified' ? 'text-on-surface-variant line-through opacity-70' : 'text-white'}`}>{team.team_name}</span>
+                            <span className="text-[9px] uppercase font-bold text-primary tracking-widest mt-0.5">{team.category}</span>
                             {team.status === 'disqualified' && (
                               <span className="text-[9px] uppercase font-bold text-red-500 tracking-widest mt-0.5">Descalificado</span>
                             )}

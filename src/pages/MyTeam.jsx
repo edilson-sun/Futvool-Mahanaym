@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 
 export default function MyTeam() {
   const { currentUser } = useAuth();
+  const [teams, setTeams] = useState([]);
+  const [selectedTeamIndex, setSelectedTeamIndex] = useState(0);
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -18,25 +20,17 @@ export default function MyTeam() {
 
   const API_URL = import.meta.env.VITE_API_URL || '';
 
-  const fetchTeamData = async () => {
+  const fetchTeams = async () => {
     if (!currentUser?.email) return;
     try {
       setLoading(true);
-      // Fetch team
       const teamRes = await fetch(`${API_URL}/api/teams/my-team?email=${currentUser.email}`);
-      if (!teamRes.ok) throw new Error('No se encontró equipo');
-      const teamData = await teamRes.json();
-      setTeam(teamData);
-
-      // Fetch players
-      const playersRes = await fetch(`${API_URL}/api/players?team_id=${teamData.id}`);
-      const playersData = await playersRes.json();
-      setPlayers(playersData);
-
-      // Fetch matches
-      const matchesRes = await fetch(`${API_URL}/api/matches?team_id=${teamData.id}`);
-      const matchesData = await matchesRes.json();
-      setMatches(matchesData);
+      if (!teamRes.ok) throw new Error('No se encontraron equipos');
+      const teamsData = await teamRes.json();
+      setTeams(teamsData);
+      if (teamsData.length > 0) {
+        setTeam(teamsData[selectedTeamIndex] || teamsData[0]);
+      }
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -45,9 +39,33 @@ export default function MyTeam() {
     }
   };
 
+  const fetchTeamDetails = async (teamId) => {
+    try {
+      // Fetch players
+      const playersRes = await fetch(`${API_URL}/api/players?team_id=${teamId}`);
+      const playersData = await playersRes.json();
+      setPlayers(playersData);
+
+      // Fetch matches
+      const matchesRes = await fetch(`${API_URL}/api/matches?team_id=${teamId}`);
+      const matchesData = await matchesRes.json();
+      setMatches(matchesData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    fetchTeamData();
+    fetchTeams();
   }, [currentUser]);
+
+  useEffect(() => {
+    if (teams.length > 0) {
+      const activeTeam = teams[selectedTeamIndex] || teams[0];
+      setTeam(activeTeam);
+      fetchTeamDetails(activeTeam.id);
+    }
+  }, [teams, selectedTeamIndex]);
 
   const handleAddPlayer = async (e) => {
     e.preventDefault();
@@ -65,7 +83,7 @@ export default function MyTeam() {
       
       if (res.ok) {
         setNewPlayer({ name: '', number: '', position: 'Portero' });
-        fetchTeamData();
+        fetchTeamDetails(team.id);
       }
     } catch (err) {
       console.error('Error adding player:', err);
@@ -76,7 +94,7 @@ export default function MyTeam() {
     if (!confirm('¿Eliminar jugador?')) return;
     try {
       const res = await fetch(`${API_URL}/api/players/${id}`, { method: 'DELETE' });
-      if (res.ok) fetchTeamData();
+      if (res.ok) fetchTeamDetails(team.id);
     } catch (err) {
       console.error('Error deleting player:', err);
     }
@@ -126,12 +144,35 @@ export default function MyTeam() {
 
   return (
     <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
+      {/* Selector de equipos (si hay más de 1) */}
+      {teams.length > 1 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {teams.map((t, index) => (
+            <button
+              key={t.id}
+              onClick={() => setSelectedTeamIndex(index)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                selectedTeamIndex === index 
+                  ? 'bg-primary text-black shadow-[0_0_15px_rgba(107,254,156,0.3)]' 
+                  : 'bg-surface-container border border-outline-variant/10 text-on-surface-variant hover:text-white'
+              }`}
+            >
+              {t.name} <span className="opacity-60 ml-1">({t.category})</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Team Header */}
       <div className="bg-surface-container-high rounded-3xl p-8 border border-outline-variant/10 shadow-xl mb-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
         <div className="flex flex-col md:flex-row md:items-center gap-8 relative z-10">
-          <div className="w-24 h-24 rounded-2xl bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center shrink-0 shadow-inner">
-            <span className="material-symbols-outlined text-5xl text-primary">shield</span>
+          <div className="w-24 h-24 rounded-2xl bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center shrink-0 shadow-inner overflow-hidden">
+            {team.logo_url ? (
+               <img src={team.logo_url} alt="Logo" className="w-full h-full object-cover" />
+            ) : (
+               <span className="material-symbols-outlined text-5xl text-primary">shield</span>
+            )}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">

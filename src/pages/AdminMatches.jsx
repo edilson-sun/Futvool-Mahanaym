@@ -242,8 +242,13 @@ export default function AdminMatches() {
                    <div className="h-10 w-px bg-outline-variant/20 hidden md:block"></div>
                    <div className="flex items-center gap-4 flex-1">
                      <div className="flex items-center gap-3 w-32 justify-end text-right">
-                       <span className="font-bold text-white text-sm">{match.home_team_name}</span>
-                       <div className="w-8 h-8 rounded-full bg-surface-container-highest shrink-0 border border-outline-variant/20"></div>
+                       <div className="flex flex-col items-end">
+                         <span className="font-bold text-white text-sm">{match.home_team_name}</span>
+                         <span className="text-[9px] uppercase font-bold text-primary">{match.home_team_category}</span>
+                       </div>
+                       <div className="w-8 h-8 rounded-full bg-surface-container-highest shrink-0 border border-outline-variant/20 overflow-hidden">
+                         {match.home_team_logo && <img src={match.home_team_logo} alt={match.home_team_name} className="w-full h-full object-cover" />}
+                       </div>
                      </div>
                      
                      {match.status === 'finished' ? (
@@ -255,8 +260,13 @@ export default function AdminMatches() {
                      )}
 
                      <div className="flex items-center gap-3 w-32 justify-start font-bold">
-                       <div className="w-8 h-8 rounded-full bg-surface-container-highest shrink-0 border border-outline-variant/20"></div>
-                       <span className="font-bold text-white text-sm">{match.away_team_name}</span>
+                       <div className="w-8 h-8 rounded-full bg-surface-container-highest shrink-0 border border-outline-variant/20 overflow-hidden">
+                         {match.away_team_logo && <img src={match.away_team_logo} alt={match.away_team_name} className="w-full h-full object-cover" />}
+                       </div>
+                       <div className="flex flex-col items-start">
+                         <span className="font-bold text-white text-sm">{match.away_team_name}</span>
+                         <span className="text-[9px] uppercase font-bold text-primary">{match.away_team_category}</span>
+                       </div>
                      </div>
                    </div>
                 </div>

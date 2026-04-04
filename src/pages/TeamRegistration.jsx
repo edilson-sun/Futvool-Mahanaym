@@ -22,22 +22,6 @@ export default function TeamRegistration() {
 
   const API_URL = import.meta.env.VITE_API_URL || '';
 
-  useEffect(() => {
-    async function checkExistingTeam() {
-      if (currentUser?.email) {
-        try {
-          const res = await fetch(`${API_URL}/api/teams/my-team?email=${currentUser.email}`);
-          if (res.ok) {
-            navigate('/mi-equipo');
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-    checkExistingTeam();
-  }, [currentUser, navigate, API_URL]);
-
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
