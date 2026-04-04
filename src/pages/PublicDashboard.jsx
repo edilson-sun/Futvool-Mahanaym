@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 export default function PublicDashboard() {
-  const [standings, setStandings] = useState([]);
+   const [standings, setStandings] = useState([]);
   const [scorers, setScorers] = useState([]);
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('Todas');
+
+  const categories = ['Todas', 'Sub-8', 'Sub-10', 'Sub-12', 'Sub-14', 'Sub-16', 'Sub-18'];
 
   const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -124,6 +127,23 @@ export default function PublicDashboard() {
             </h2>
           </div>
 
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  selectedCategory === cat 
+                    ? 'bg-primary text-black shadow-[0_0_15px_rgba(107,254,156,0.3)] scale-105' 
+                    : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-high border border-outline-variant/10'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
           <div className="glass-panel rounded-2xl overflow-hidden border border-outline-variant/10 shadow-2xl relative min-h-[400px]">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-tertiary to-primary"></div>
             <div className="overflow-x-auto">
@@ -152,7 +172,9 @@ export default function PublicDashboard() {
                       <tr>
                         <td colSpan="10" className="p-8 text-center text-on-surface-variant">Sin datos de posiciones disponibles.</td>
                       </tr>
-                    ) : standings.map((team, index) => (
+                    ) : standings
+                        .filter(team => selectedCategory === 'Todas' || team.category?.toLowerCase() === selectedCategory.toLowerCase())
+                        .map((team, index) => (
                       <tr key={team.team_id} className="border-b border-outline-variant/5 hover:bg-surface-container-high/50 transition-colors group">
                         <td className="p-4 pl-6 text-center">
                           <div className={`w-6 h-6 rounded-full font-bold flex items-center justify-center text-xs mx-auto group-hover:scale-110 transition-transform ${index === 0 ? 'bg-primary text-black shadow-[0_0_10px_rgba(107,254,156,0.3)]' : 'bg-surface-container-highest text-white'}`}>

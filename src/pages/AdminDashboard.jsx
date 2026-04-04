@@ -85,7 +85,7 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500>
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-8">
@@ -186,6 +186,11 @@ export default function AdminDashboard() {
             ) : recentMatches.map(match => (
               <div key={match.id} className="bg-surface-container-low p-4 rounded-2xl flex items-center justify-between border border-outline-variant/5">
                 <div className="flex flex-col items-center gap-1 flex-1 text-center">
+                  {match.home_team_logo ? (
+                    <img src={match.home_team_logo} alt={match.home_team_name} className="w-8 h-8 rounded-full border border-outline-variant/10 shadow-inner object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-black border border-outline-variant/10 shadow-inner uppercase">{match.home_team_name.slice(0,2)}</div>
+                  )}
                   <span className="text-[10px] font-black text-white truncate max-w-[100px]">{match.home_team_name}</span>
                 </div>
                 <div className="flex flex-col items-center gap-0.5 mx-2 min-w-[80px]">
@@ -197,6 +202,11 @@ export default function AdminDashboard() {
                    <span className="text-[8px] uppercase font-bold text-on-surface-variant/60">{match.status === 'finished' ? 'Finalizado' : match.match_date.split('T')[0]}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 flex-1 text-center">
+                  {match.away_team_logo ? (
+                    <img src={match.away_team_logo} alt={match.away_team_name} className="w-8 h-8 rounded-full border border-outline-variant/10 shadow-inner object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-black border border-outline-variant/10 shadow-inner uppercase">{match.away_team_name.slice(0,2)}</div>
+                  )}
                   <span className="text-[10px] font-black text-white truncate max-w-[100px]">{match.away_team_name}</span>
                 </div>
               </div>
@@ -220,8 +230,12 @@ export default function AdminDashboard() {
                <div className="grid grid-cols-2 gap-3">
                  {metrics.approvedTeams.slice(0, 6).map(team => (
                    <div key={team.id} className="flex items-center gap-3 p-3 bg-surface-container rounded-xl border border-outline-variant/5">
-                      <div className="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-xs text-primary">shield</span>
+                      <div className="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 overflow-hidden">
+                        {team.logo_url ? (
+                          <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="material-symbols-outlined text-xs text-primary">shield</span>
+                        )}
                       </div>
                       <span className="text-[10px] font-bold text-white truncate">{team.name}</span>
                    </div>
